@@ -1,2 +1,0 @@
-# monthly-wrap
-blog site
