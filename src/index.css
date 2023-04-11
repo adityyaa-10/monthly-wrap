@@ -7,3 +7,8 @@
 * {
   scroll-behavior: smooth;
 }
+
+.bg-deeppurple {
+  --tw-bg-opacity: 1;
+  background-color: rgb(161 67 244 / var(--tw-bg-opacity));
+}
