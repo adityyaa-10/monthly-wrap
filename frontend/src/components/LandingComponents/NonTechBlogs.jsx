@@ -3,7 +3,7 @@ import layout from '../../layout.js';
 import { Player } from '@lottiefiles/react-lottie-player';
 import Button from './Button.jsx';
 
-const CardDeal = () => (
+const NonTechBlogs = () => (
   <section className={layout.section}>
     <div className={layout.sectionInfo}>
       <h2 className={styles.heading2}>Write Technical and<br className="sm:block hidden" /> <span className='text-blue'>Non-Technical Blogs</span></h2>
@@ -26,4 +26,4 @@ const CardDeal = () => (
 )
 
 
-export default CardDeal
+export default NonTechBlogs

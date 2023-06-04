@@ -1,8 +1,9 @@
-/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import reactbg from '../../assets/Images/react.png'
+import PropTypes from 'prop-types';
 
 const EachBlogCard = (props) => {
+    const { title, category, author } = props;
     const [isReadMore, setIsReadMore] = useState(false);
 
     const toggleReadMore = () => {
@@ -18,11 +19,11 @@ const EachBlogCard = (props) => {
                         alt="blog"
                     />
                     <div className="flex items-center justify-center">
-                        <h2 className="text-lg font-medium text-white mx-auto mt-4">{props.title}</h2>
+                        <h2 className="text-lg font-medium text-white mx-auto mt-4">{title}</h2>
                     </div>
                     <div className="p-6">
-                        <h2 className="tracking-widest text-xs font-medium text-white mb-1">{props.category}</h2>
-                        <h1 className="text-lg font-medium text-indigo-500 mb-3 ">{props.author}</h1>
+                        <h2 className="tracking-widest text-xs font-medium text-white mb-1">{category}</h2>
+                        <h1 className="text-lg font-medium text-indigo-500 mb-3 ">{author}</h1>
                         <div className="leading-relaxed mb-3">
                             {isReadMore
                                 ? 'Expanded content of the blog post goes here.'
@@ -53,6 +54,12 @@ const EachBlogCard = (props) => {
             </div>
         </section>
     );
+};
+
+EachBlogCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired
 };
 
 export default EachBlogCard;

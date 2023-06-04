@@ -1,11 +1,11 @@
-import bill from "../../assets/LandingAssets/bill.png";
+import rtfexample from "../../assets/LandingAssets/rtfexample.png";
 import styles from '../../style.js';
 import layout from "../../layout.js";
-const Billing = () =>
+const WriteInRTF = () =>
 (
   <section id='product' className={layout.sectionReverse}>
     <div className={layout.sectionImgReverse}>
-      <img src={bill} alt="billing" className='w-[90%] h-[100%] relative z-[5]' />
+      <img src={rtfexample} alt="billing" className='w-[90%] h-[100%] relative z-[5]' />
     </div>
     <div className={layout.sectionInfo}>
       <h2 className={styles.heading2}>Write your blogs in <br className='sm:block hidden' /><span className='text-blue'> Rich Text Format</span></h2>
@@ -17,4 +17,4 @@ const Billing = () =>
 )
 
 
-export default Billing
+export default WriteInRTF
