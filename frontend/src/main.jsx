@@ -13,13 +13,13 @@ import CreateBlog from './pages/CreateBlog'
 import ContactUs from './pages/ContactUs';
 import UserDashboard from './pages/UserDashboard';
 import EditUserProfile from './pages/EditUserProfile';
-import LandingPage from './pages/LandingPage';
+import App from './App';
 import Home from './pages/Home';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LandingPage />
+    element: <App />
   },
   {
     path: "/home",
