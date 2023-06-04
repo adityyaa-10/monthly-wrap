@@ -1,15 +1,18 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ChangePasswordSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework import status
 from django.contrib.auth import authenticate
+from rest_framework import permissions
+
 
 
 class RegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny,]
     def post(self, request):
         try:
             data = request.data
@@ -41,6 +44,8 @@ class RegisterAPIView(APIView):
 
         
 class LoginAPIView(APIView):
+    permission_classes = [permissions.AllowAny,]
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -57,6 +62,18 @@ class LoginAPIView(APIView):
             else:
                 return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated,]
+    def post(self, request):
+        data = request.data
+        serializer = ChangePasswordSerializer(data=data, context = {
+            'user':request.user
+        })
+        if serializer.is_valid():
+            return Response({'res':'Password changed successfully!'}, status= status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
