@@ -47,6 +47,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user 
     
 
+class LoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','password']
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

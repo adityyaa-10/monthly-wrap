@@ -1,37 +1,62 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, LoginSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework import status
+from django.contrib.auth import authenticate
 
 
 class RegisterAPIView(APIView):
     def post(self, request):
         try:
             data = request.data
-            serializer = RegisterSerializer(data = data)
+            serializer = RegisterSerializer(data=data)
 
             if serializer.is_valid():
-                serializer.save()
+                user = serializer.save()
+
+                refresh = RefreshToken.for_user(user)
+                tokens = {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
+
                 return Response({
-                'res':'Your account has been created successfully!'
-                },status=status.HTTP_201_CREATED)
+                    'tokens': tokens,
+                    'message': 'Your account has been created successfully!'
+                    }, status=status.HTTP_201_CREATED)
 
             return Response({
-                    'data': serializer.errors,
-                    'message': 'Account not created!'
-                },
-                status=status.HTTP_400_BAD_REQUEST
-                )
-                
+                'data': serializer.errors,
+                'message': 'Account not created!'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
             return Response({
-                    'error': 'Something went wrong'
-                },
-                status=status.HTTP_400_BAD_REQUEST
-                ) 
+                'error': 'Something went wrong'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        
+class LoginAPIView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.data.get('username')
+            password = serializer.data.get('password')
+            user = authenticate(username=username, password=password)
+            if user:
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'res': 'You are successfully logged in!'
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

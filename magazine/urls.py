@@ -4,7 +4,7 @@ from .views import UserPostAPIView, LikesAPIView, CommentAPIView, BlogDetailAPIV
 
 
 urlpatterns = [
-    path('', BlogListAPIView.as_view()),
+    path('', BlogListAPIView.as_view(), name='home'),
     path('create/',BlogCreateAPIView.as_view()),
     path('<slug:slug>/', BlogDetailAPIView.as_view()),
     path('users/<str:username>/', UserPostAPIView.as_view()),
