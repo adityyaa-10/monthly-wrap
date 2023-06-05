@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import MyTokenObtainPairView, RegisterAPIView, LoginAPIView, ChangePasswordAPIView, PasswordResetEmailAPIView, PasswordResetAPIView
+from .views import MyTokenObtainPairView, RegisterAPIView, CustomLoginAPIView, ChangePasswordAPIView, PasswordResetEmailAPIView, PasswordResetAPIView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('signup/',RegisterAPIView.as_view(), name = 'signup'),
+    path('register/',RegisterAPIView.as_view(), name = 'register'),
     path('login/', LoginAPIView.as_view(), name='login'),
     path('changepassword/',ChangePasswordAPIView.as_view(), name='change-password'),
     path('send-reset-password-email/', PasswordResetEmailAPIView.as_view(), name='reset-password-email'),

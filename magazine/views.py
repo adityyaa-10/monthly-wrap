@@ -82,33 +82,25 @@ class UserPostAPIView(APIView):
     
 class LikesAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    def get_object(self, slug):
+    def post(self, request, slug):
         try:
-            return BlogPost.objects.get(slug = slug)
+            post = BlogPost.objects.get(slug=slug)
+            user = request.user 
+            
+            # Check if the user has already liked the post
+            if Likes.objects.filter(post=post, user=user).exists():
+                return Response({'error': 'Liked!'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Increment the likes count and create a Like object
+            post.likes_count = post.likes_count + 1
+            post.save()
+            Likes.objects.create(post=post, user=user)
+            
+            serializer = BlogPostSerializer(post)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except BlogPost.DoesNotExist:
-            return None
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, slug):
-        likes = Likes.objects.all()
-        serializer = LikesSerializer(likes, many=True)
-        return Response(serializer.data)
-    
-    def post(self, request, slug, *args, **kwargs):
-        blog = self.get_object(slug)
-        if blog is None:
-            return Response({'error': 'Post not found'}, status = status.HTTP_404_NOT_FOUND)
-        
-        liked_by = blog.likes_count.all().values_list('user', flat = True)
-        if request.user.id in liked_by:
-            blog.likes_count -= 1
-            blog.likes_count.filter(user = request.user).delete()
-        else:
-            blog.likes_count += 1
-            liked_by = Likes(user = request.user, blog = blog)
-            liked_by.save()
-        blog.save()
-        serializer = BlogPostSerializer(blog)
-        return Response(serializer.data, status = status.HTTP_200_OK)
 
 
 class CommentAPIView(APIView):
