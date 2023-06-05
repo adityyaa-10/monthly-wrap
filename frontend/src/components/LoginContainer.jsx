@@ -1,18 +1,19 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 import { Link } from "react-router-dom"
-import axios from 'axios'
+
+
 const LoginSchema = Yup.object().shape({
-    email: Yup.string()
-        .email('Please enter a valid email address')
-        .required('This field can not be empty'),
-    password: Yup.string()
-        .required('This field can not be empty'),
+    username: Yup.string().required('This field cannot be empty'),
+    password: Yup.string().required('Enter your password'),
 });
+
 
 const LoginContainer = () => {
     const handleFormSubmit = (values) => {
-        axios.post('http://127.0.0.1:8000/api/users/login/', values)
+        axios
+            .post('http://127.0.0.1:8000/api/users/login/', values)
             .then(response => {
                 // Handle successful login
                 console.log(response.data);
@@ -22,27 +23,26 @@ const LoginContainer = () => {
                 console.error(error);
             });
     };
-
     return (
         <div>
             <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Log In to your account</h2>
             <Formik
                 initialValues={{
-                    email: '',
+                    username: '',
                     password: '',
                 }}
                 validationSchema={LoginSchema}
-                onSubmit={handleFormSubmit}
+                onSubmit={handleFormSubmit} //
             >
                 {({ errors, touched }) => (
                     <Form>
                         <div className="relative mb-4">
-                            <label htmlFor="full-name" className="leading-7 text-sm font-medium text-gray-700">Email</label>
-                            <Field type='email' placeholder="Email" name="email" className='w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out' />
-                            {touched.email && errors.email && <div className='text-sm font-normal text-red-600'>{errors.email}</div>}
+                            <label htmlFor="username" className="leading-7 text-sm font-medium text-gray-700">Username</label>
+                            <Field placeholder="Userame" name="username" className='w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out' />
+                            {touched.username && errors.username && <div className='text-sm font-normal text-red-600'>{errors.username}</div>}
                         </div>
                         <div className="relative mb-4">
-                            <label htmlFor="full-name" className="leading-7 text-sm font-medium text-gray-700">Password</label>
+                            <label htmlFor="password" className="leading-7 text-sm font-medium text-gray-700">Password</label>
                             <Field type="password" placeholder="Password" name="password" className='w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out' />
                             {touched.password && errors.password && <div className='text-sm font-normal text-red-600'>{errors.password}</div>}
                         </div>

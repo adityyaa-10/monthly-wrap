@@ -19,7 +19,7 @@ const SignupSchema = Yup.object().shape({
 const SignupContainer = () => {
     const handleFormSubmit = (values) => {
 
-        axios.post('http://127.0.0.1:8000/api/users/signup/', values)
+        axios.post('http://127.0.0.1:8000/api/users/register/', values)
             .then(response => {
                 // Handle successful response
                 console.log(response.data);
