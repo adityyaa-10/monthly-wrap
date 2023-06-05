@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework import status
-from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 from rest_framework import permissions
 
 
@@ -43,25 +43,23 @@ class RegisterAPIView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         
-class LoginAPIView(APIView):
-    permission_classes = [permissions.AllowAny,]
-
+class CustomLoginAPIView(APIView):
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            username = serializer.data.get('username')
-            password = serializer.data.get('password')
-            user = authenticate(username=username, password=password)
-            if user:
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token),
-                    'res': 'You are successfully logged in!'
-                }, status=status.HTTP_200_OK)
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        # Manually check the user's credentials
+        try:
+            user = User.objects.get(username=username)
+            if user.check_password(password):
+                # Create a new token for the authenticated user
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key, 'message': 'Login successful'})
             else:
-                return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Invalid credentials'})
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid credentials'})
+        
 
 class ChangePasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -85,9 +83,9 @@ class PasswordResetEmailAPIView(APIView):
 class PasswordResetAPIView(APIView):
   def post(self, request, uid, token, format=None):
     serializer = PasswordResetSerializer(data=request.data, context={'uid':uid, 'token':token})
-    serializer.is_valid(raise_exception=True)
-    return Response({'msg':'Password Reset Successfully'}, status=status.HTTP_200_OK)
-
+    if serializer.is_valid():
+        return Response({'msg':'Password Reset Successfully'}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
