@@ -3,7 +3,7 @@ from .views import MyTokenObtainPairView, RegisterAPIView, LoginAPIView, ChangeP
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('register/',RegisterAPIView.as_view(), name = 'register'),
+    path('signup/',RegisterAPIView.as_view(), name = 'signup'),
     path('login/', LoginAPIView.as_view(), name='login'),
     path('changepassword/',ChangePasswordAPIView.as_view(), name='change-password'),
     path('send-reset-password-email/', PasswordResetEmailAPIView.as_view(), name='reset-password-email'),
