@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import permissions
 from .serializers import *
+from rest_framework import status
+from .serializers import BlogPostSerializer
 
 
 class BlogListAPIView(APIView):
