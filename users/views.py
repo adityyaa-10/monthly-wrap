@@ -58,7 +58,7 @@ class CustomLoginAPIView(APIView):
             else:
                 return Response({'error': 'Invalid credentials'})
         except User.DoesNotExist:
-            return Response({'error': 'Invalid credentials'})
+            return Response({'error': 'DoesNotExist'})
         
 
 class ChangePasswordAPIView(APIView):

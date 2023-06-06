@@ -47,7 +47,7 @@ const LoginContainer = () => {
                             {touched.password && errors.password && <div className='text-sm font-normal text-red-600'>{errors.password}</div>}
                         </div>
                         <div className='relative mb-4'>
-                            <h1 className='leading-7 text-sm font-semibold text-blue'>Forgot Password?</h1>
+                            <Link to={`/resetpassword`} className='leading-7 text-sm font-semibold text-blue'>Forgot Password?</Link>
                         </div>
                         <button type="submit" className='hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2'>Log In</button>
                         <div className='color-light pt-4 text-center text-sm'>

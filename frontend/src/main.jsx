@@ -15,6 +15,7 @@ import UserDashboard from './pages/UserDashboard';
 import EditUserProfile from './pages/EditUserProfile';
 import App from './App';
 import Home from './pages/Home';
+import ResetPassword from './pages/ResetPassword';
 
 const router = createBrowserRouter([
   {
@@ -49,7 +50,10 @@ const router = createBrowserRouter([
     path: "/editprofile",
     element: <EditUserProfile />
   },
-
+  {
+    path: "/resetpassword",
+    element: <ResetPassword />
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
