@@ -15,7 +15,7 @@ const LoginContainer = () => {
         axios
             .post('http://127.0.0.1:8000/api/users/login/', values)
             .then(response => {
-                // Handle successful login
+                window.open('/home')
                 console.log(response.data);
             })
             .catch(error => {
