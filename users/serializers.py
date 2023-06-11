@@ -7,6 +7,7 @@ from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeErr
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .utils import Util
+from .models import Profile
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length = 8, write_only = True)
@@ -14,6 +15,14 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ( 'username','email', 'password')
+
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required = True)

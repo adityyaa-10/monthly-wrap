@@ -1,7 +1,6 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 
 const LoginSchema = Yup.object().shape({
@@ -11,17 +10,34 @@ const LoginSchema = Yup.object().shape({
 
 
 const LoginContainer = () => {
-    const handleFormSubmit = (values) => {
-        axios
-            .post('http://127.0.0.1:8000/api/users/login/', values)
-            .then(response => {
-                // Handle successful login
-                console.log(response.data);
-            })
-            .catch(error => {
-                // Handle error
-                console.error(error);
+    const navigate = useNavigate();
+    const HandleSubmit = async (values) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/users/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
             });
+
+            if (response.ok) {
+                const data = await response.json();
+                const token = data.token; // Assuming the token is returned as 'token' field in the response
+
+                // Do something with the token, such as storing it in localStorage or Redux state
+                // For example:
+                localStorage.setItem('token', token);
+
+                console.log('Login successful');
+                navigate('/home')
+                // Redirect to the home page
+            } else {
+                console.error('Login failed');
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
     };
     return (
         <div>
@@ -32,7 +48,7 @@ const LoginContainer = () => {
                     password: '',
                 }}
                 validationSchema={LoginSchema}
-                onSubmit={handleFormSubmit} //
+                onSubmit={HandleSubmit}
             >
                 {({ errors, touched }) => (
                     <Form>
