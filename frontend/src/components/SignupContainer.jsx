@@ -1,40 +1,53 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Link } from "react-router-dom"
-import axios from 'axios';
+import { useState } from 'react'
 const SignupSchema = Yup.object().shape({
     first_name: Yup.string().required('This field can not be empty'),
     last_name: Yup.string().required('This field can not be empty'),
-    username: Yup.string().required('This field can not be empty'),
+    username: Yup.string().required('This field can not be empty')
+        .min(10, 'Username is too small'),
     email: Yup.string()
         .email('Please enter a valid email address')
         .required('This field can not be empty'),
     password: Yup.string()
-        .min(6, 'Password should contain atleast 6 characters')
+        .min(10, 'Password should contain atleast 10 characters including a special character')
         .required('This field can not be empty'),
     password2: Yup.string()
         .oneOf([Yup.ref('password'), null], 'Passwords must match').required('Passwords must match')
 });
 
 const SignupContainer = () => {
-    const handleFormSubmit = () => {
+    const [signupError, setSignupError] = useState(null);
+    const [signupSuccess, setSignupSuccess] = useState(false);
 
-        axios.post('http://127.0.0.1:8000/api/users/register/')
-            .then(response => {
-                // Handle successful response
-                window.open('/login')
-                console.log(response.data);
-            })
-            .catch(error => {
-                // Handle error response
-                console.error(error);
+    const handleSubmit = async (values) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/users/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
             });
+            console.log(JSON.stringify(values));
+            if (!response.ok) {
+                throw new Error('Sign up request failed');
+            }
+
+            setSignupSuccess(true);
+            setSignupError(null);
+        } catch (error) {
+            setSignupSuccess(false);
+            setSignupError('Something Went Wrong');
+        }
     };
-
-
     return (
         <div>
             <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Sign Up</h2>
+            {signupSuccess && <div className='text-green-500 text-sm font-normal'>Signup successful! Proceed to Login Page</div>}
+            {signupError && <div className='text-red-600 font-normal text-sm'>Error: {signupError}</div>}
+
             <Formik
                 initialValues={{
                     first_name: '',
@@ -45,7 +58,7 @@ const SignupContainer = () => {
                     password2: '',
                 }}
                 validationSchema={SignupSchema}
-                onSubmit={handleFormSubmit}
+                onSubmit={handleSubmit}
             >
                 {({ errors, touched }) => (
                     <Form>
