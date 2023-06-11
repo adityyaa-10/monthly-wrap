@@ -10,10 +10,9 @@ from .utils import Util
 from .models import Profile
 
 class ProfileSerializer(serializers.ModelSerializer):
-    
+    user = serializers.SlugRelatedField(read_only=True, slug_field='username')
     class Meta:
         model = Profile
-        fields = '__all__'
         exclude = ('name','email',)
 
 
