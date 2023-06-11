@@ -9,19 +9,18 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .utils import Util
 from .models import Profile
 
+class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(read_only=True, slug_field='username')
+    class Meta:
+        model = Profile
+        exclude = ('name','email',)
+
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length = 8, write_only = True)
-
     class Meta:
         model = User
         fields = ( 'username','email', 'password')
-
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = '__all__'
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -34,10 +33,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    profile = ProfileSerializer(required = False)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','profile')
 
     def validate(self, data):
         if User.objects.filter(username = data['username']).exists():
@@ -49,6 +49,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        profile_data = validated_data.pop('profile',{})
+
         user = User.objects.create(
             first_name = validated_data['first_name'],
             last_name = validated_data['last_name'],
@@ -57,6 +59,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
+        Profile.objects.create(user=user, **profile_data)
+
         return user 
     
 
