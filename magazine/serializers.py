@@ -12,7 +12,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.username')
     class Meta:
         model = BlogPost
-        fields = ('id','title', 'content', 'date_posted','user', 'likes_count')
+        fields = ('id','title', 'content', 'date_posted','user', 'likes_count', 'category',)
 
 
 class LikesSerializer(serializers.ModelSerializer):

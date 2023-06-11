@@ -17,6 +17,8 @@ class BlogListAPIView(APIView):
         return Response(serializer.data, status = status.HTTP_200_OK)
         
 class BlogCreateAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
@@ -79,6 +81,17 @@ class UserPostAPIView(APIView):
         posts = BlogPost.objects.filter(user = user)
         serializer = BlogPostSerializer(posts, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
+    
+class CategoryBlogView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, category):
+        if category.lower() == 'all':
+            blogs = BlogPost.objects.all()
+        else:
+            blogs = BlogPost.objects.filter(category__iexact=category)
+        serializer = BlogPostSerializer(blogs, many=True)
+        return Response(serializer.data)
     
 class LikesAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]

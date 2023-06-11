@@ -12,6 +12,7 @@ class BlogPost(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     likes_count = models.IntegerField(default = 0)
+    category = models.CharField(max_length=255, default='All')
     
 
     def __str__(self):
