@@ -66,6 +66,13 @@ class LoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username','password']
 
+class LogoutSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()
+
+    def validate(self, attrs):
+        self.token = attrs['refresh_token']
+        return attrs
+
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])

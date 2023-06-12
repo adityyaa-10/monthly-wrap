@@ -81,6 +81,25 @@ class CustomLoginAPIView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'DoesNotExist'})
         
+from .serializers import LogoutSerializer
+
+class LogoutAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = LogoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token = serializer.token
+
+        try:
+            # Blacklist the provided token
+            RefreshToken(token).blacklist()
+        except Exception as e:
+            return Response({'detail': 'Failed to logout'}, status=400)
+
+        return Response({'detail': 'Successfully logged out'})
+
+        
 
 class ChangePasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
