@@ -13,6 +13,7 @@ class Profile(models.Model):
     linkedin_link = models.URLField(blank=True)
     techstack = models.TextField(blank=True)
     other_interests = models.TextField(blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/',default='blog_images/default.jpg')
 
     def __str__(self):
         return self.user.username
@@ -25,9 +26,9 @@ class Profile(models.Model):
         super().save(*args, **kwargs)
 
 
-        # img = Image.open(self.profile_picture.path)
+        img = Image.open(self.profile_picture.path)
 
-        # if img.height > 400 or img.width > 400:
-        #     output_img = (400,400)
-        #     img.thumbnail(output_img)           
-        #     img.save(self.profile_picture.path)
+        if img.height > 300 or img.width > 300:
+            output_img = (300,300)
+            img.thumbnail(output_img)           
+            img.save(self.profile_picture.path)
