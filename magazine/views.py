@@ -17,10 +17,15 @@ class BlogListAPIView(APIView):
         return Response(serializer.data, status = status.HTTP_200_OK)
         
 class BlogCreateAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            blog = serializer.save(user=request.user)
+            images = request.FILES.getlist('images')
+            for image in images:
+                Image.objects.create(blog=blog, image=image)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -79,6 +84,17 @@ class UserPostAPIView(APIView):
         posts = BlogPost.objects.filter(user = user)
         serializer = BlogPostSerializer(posts, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
+    
+class CategoryBlogView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, category):
+        if category.lower() == 'all':
+            blogs = BlogPost.objects.all()
+        else:
+            blogs = BlogPost.objects.filter(category__iexact=category)
+        serializer = BlogPostSerializer(blogs, many=True)
+        return Response(serializer.data)
     
 class LikesAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]

@@ -7,12 +7,18 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'username']
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ('id', 'image',)
+
 
 class BlogPostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.username')
+    images = ImageSerializer(many=True, read_only=True, required = False)
     class Meta:
         model = BlogPost
-        fields = ('id','title', 'content', 'date_posted','user', 'likes_count')
+        fields = ('id','title', 'content', 'date_posted','user', 'likes_count', 'category','cover_image','images',)
 
 
 class LikesSerializer(serializers.ModelSerializer):
