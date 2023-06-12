@@ -1,6 +1,5 @@
 
 from django.db import models
-from wysiwyg.fields import WysiwygField
 from rest_framework import fields
 
 
