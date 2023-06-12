@@ -11,4 +11,5 @@ urlpatterns = [
     path('<slug:slug>/likes/', LikesAPIView.as_view()),
     path('<slug:slug>/comment/', CommentAPIView.as_view()),
     path('blogs/category/<str:category>/', CategoryBlogView.as_view(), name='category-blogs'),
+
 ]

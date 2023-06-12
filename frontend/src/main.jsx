@@ -16,6 +16,7 @@ import EditUserProfile from './pages/EditUserProfile';
 import App from './App';
 import Home from './pages/Home';
 import ResetPassword from './pages/ResetPassword';
+import FullBlogPage from './components/FullBlogPage';
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/resetpassword",
     element: <ResetPassword />
+  },
+  {
+    path: "/blogs/:title/:author/:category",
+    element: <FullBlogPage />
   }
 ]);
 
