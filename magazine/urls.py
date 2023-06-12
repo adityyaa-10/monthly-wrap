@@ -7,7 +7,7 @@ urlpatterns = [
     path('', BlogListAPIView.as_view(), name='home'),
     path('create/',BlogCreateAPIView.as_view(), name='create'),
     path('<slug:slug>/', BlogDetailAPIView.as_view()),
-    path('users/<str:username>/', UserPostAPIView.as_view()),
-    path('<slug:slug>/likes/', LikesAPIView.as_view()),
-    path('<slug:slug>/comment/', CommentAPIView.as_view()),
+    path('users/<str:username>/', UserPostAPIView.as_view(),),
+    path('<slug:slug>/likes/', LikesAPIView.as_view(), name='likes'),
+    path('<slug:slug>/comment/', CommentAPIView.as_view(), name='comment'),
 ]

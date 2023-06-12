@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import reactbg from '../../assets/Images/react.png'
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 const EachBlogCard = (props) => {
     const { title, category, author } = props;
     const [isReadMore, setIsReadMore] = useState(false);
+    const navigate = useNavigate();
 
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
     };
+
+    const openFullBlog = () => {
+        navigate(`/blogs/${title}/${author}/${category}`);
+    };
+
     return (
         <section className='w-full md:w-1/2 xl:w-1/3'>
             <div className="p-4">
@@ -30,24 +37,44 @@ const EachBlogCard = (props) => {
                                 : 'Shortened content of the blog post goes here.'}
                         </div>
                         <div className="flex items-center flex-wrap">
-                            <button
-                                className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
-                                onClick={toggleReadMore}
-                            >
-                                {isReadMore ? 'Read Less' : 'Read More'}
-                                <svg
-                                    className="w-4 h-4 ml-2"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
+                            {isReadMore ? (
+                                <button
+                                    className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
+                                    onClick={toggleReadMore}
                                 >
-                                    <path d="M5 12h14"></path>
-                                    <path d="M12 5l7 7-7 7"></path>
-                                </svg>
-                            </button>
+                                    Read Less
+                                    <svg
+                                        className="w-4 h-4 ml-2"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M5 12h14"></path>
+                                    </svg>
+                                </button>
+                            ) : (
+                                <button
+                                    className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
+                                    onClick={openFullBlog}
+                                >
+                                    Read More
+                                    <svg
+                                        className="w-4 h-4 ml-2"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M5 12h14"></path>
+                                        <path d="M12 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
