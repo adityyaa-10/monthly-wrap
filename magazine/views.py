@@ -52,11 +52,28 @@ class BlogDetailAPIView(APIView):
         if post is None:
             return Response({'error': 'Post not found'}, status = status.HTTP_404_NOT_FOUND)
         data = {
-            'user': request.user.id,
-            'title': request.data.get('title'),
-            'content': request.data.get('content'),
-            'likes_count': post.likes_count
-        }
+        'user': request.user.id,
+        'likes_count': post.likes_count
+    }
+
+    # Update data if provided in request
+        title = request.data.get('title')
+        if title is not None:
+            data['title'] = title
+
+        content = request.data.get('content')
+        if content is not None:
+            data['content'] = content
+
+        cover_image = request.data.get('cover_image')
+        if cover_image is not None:
+            data['cover_image'] = cover_image
+
+        images = request.data.get('images')
+        if images is not None:
+            data['images'] = images
+
+        
         serializer = BlogPostSerializer(post, data = data, partial = True)
         if serializer.is_valid():
             if post.user.id == request.user.id:
