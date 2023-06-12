@@ -22,7 +22,10 @@ class BlogCreateAPIView(APIView):
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            blog = serializer.save(user=request.user)
+            images = request.FILES.getlist('images')
+            for image in images:
+                Image.objects.create(blog=blog, image=image)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
