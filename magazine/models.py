@@ -2,16 +2,18 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-from PIL import Image
 from django.utils.text import slugify
+from .fields import RTFField, HTMLField
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    content = models.TextField()
+    content = RTFField()
     date_posted = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     likes_count = models.IntegerField(default = 0)
+    category = models.CharField(max_length=255, default='All')
+    cover_image = models.ImageField(upload_to='blog_images/',default='blog_images/default.jpg')
     
 
     def __str__(self):
@@ -23,6 +25,13 @@ class BlogPost(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+
+class Image(models.Model):
+    blog = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='blog_images/',default='blog_images/default.jpg')
+
+
 
 class Comment(models.Model):
     post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')

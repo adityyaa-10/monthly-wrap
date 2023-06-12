@@ -6,10 +6,13 @@ from rest_framework import permissions
 from .serializers import *
 from rest_framework import status
 from .serializers import BlogPostSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 
 class BlogListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, *args, **kwargs):
         posts = BlogPost.objects.all()
@@ -17,10 +20,17 @@ class BlogListAPIView(APIView):
         return Response(serializer.data, status = status.HTTP_200_OK)
         
 class BlogCreateAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            blog = serializer.save(user=request.user)
+            images = request.FILES.getlist('images')
+            for image in images:
+                Image.objects.create(blog=blog, image=image)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -28,6 +38,7 @@ class BlogCreateAPIView(APIView):
 
 class BlogDetailAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_object(self, slug):
         try:
@@ -47,11 +58,28 @@ class BlogDetailAPIView(APIView):
         if post is None:
             return Response({'error': 'Post not found'}, status = status.HTTP_404_NOT_FOUND)
         data = {
-            'user': request.user.id,
-            'title': request.data.get('title'),
-            'content': request.data.get('content'),
-            'likes_count': post.likes_count
-        }
+        'user': request.user.id,
+        'likes_count': post.likes_count
+    }
+
+    # Update data if provided in request
+        title = request.data.get('title')
+        if title is not None:
+            data['title'] = title
+
+        content = request.data.get('content')
+        if content is not None:
+            data['content'] = content
+
+        cover_image = request.data.get('cover_image')
+        if cover_image is not None:
+            data['cover_image'] = cover_image
+
+        images = request.data.get('images')
+        if images is not None:
+            data['images'] = images
+
+        
         serializer = BlogPostSerializer(post, data = data, partial = True)
         if serializer.is_valid():
             if post.user.id == request.user.id:
@@ -71,6 +99,7 @@ class BlogDetailAPIView(APIView):
 
 class UserPostAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, username, *args, **kwargs):
         user = User.objects.filter(username = username).first()
@@ -80,8 +109,23 @@ class UserPostAPIView(APIView):
         serializer = BlogPostSerializer(posts, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
     
+class CategoryBlogView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, category):
+        if category.lower() == 'all':
+            blogs = BlogPost.objects.all()
+        else:
+            blogs = BlogPost.objects.filter(category__iexact=category)
+        serializer = BlogPostSerializer(blogs, many=True)
+        return Response(serializer.data)
+    
 class LikesAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+
     def post(self, request, slug):
         try:
             post = BlogPost.objects.get(slug=slug)
@@ -105,6 +149,8 @@ class LikesAPIView(APIView):
 
 class CommentAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
 
     def get_object(self, slug):
         try:
