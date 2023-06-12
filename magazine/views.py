@@ -6,10 +6,13 @@ from rest_framework import permissions
 from .serializers import *
 from rest_framework import status
 from .serializers import BlogPostSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 
 class BlogListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, *args, **kwargs):
         posts = BlogPost.objects.all()
@@ -18,6 +21,8 @@ class BlogListAPIView(APIView):
         
 class BlogCreateAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
 
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
@@ -33,6 +38,7 @@ class BlogCreateAPIView(APIView):
 
 class BlogDetailAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_object(self, slug):
         try:
@@ -93,6 +99,7 @@ class BlogDetailAPIView(APIView):
 
 class UserPostAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, username, *args, **kwargs):
         user = User.objects.filter(username = username).first()
@@ -104,6 +111,7 @@ class UserPostAPIView(APIView):
     
 class CategoryBlogView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, category):
         if category.lower() == 'all':
@@ -115,6 +123,9 @@ class CategoryBlogView(APIView):
     
 class LikesAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+
     def post(self, request, slug):
         try:
             post = BlogPost.objects.get(slug=slug)
@@ -138,6 +149,8 @@ class LikesAPIView(APIView):
 
 class CommentAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
 
     def get_object(self, slug):
         try:
