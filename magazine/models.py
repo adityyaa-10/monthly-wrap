@@ -3,12 +3,13 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
-from .fields import RTFField, HTMLField
+from ckeditor.fields import RichTextField
+
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    content = RTFField()
+    content = RichTextField()
     date_posted = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     likes_count = models.IntegerField(default = 0)
