@@ -1,14 +1,13 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import defaultblogpic from '../assets/Images/selectcover.png'
-import axios from 'axios'
 import JoditEditor from "jodit-react";
 
 const BlogCreate = () => {
-    const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
-    const [content, setContent] = useState("");
     const [logs, setLogs] = useState([]);
     const [coverImage, setCoverImage] = useState(null);
+    const [content, setContent] = useState('')
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -49,25 +48,33 @@ const BlogCreate = () => {
         },
         [appendLog, setContent]
     );
-    const handleFormSubmit = (e) => {
+
+    const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Create a FormData object to store the form data
         const formData = new FormData();
         formData.append('title', title);
         formData.append('category', category);
         formData.append('content', content);
-        formData.append('coverImage', coverImage);
+        formData.append('cover_image', coverImage);
 
-        axios.post('http://127.0.0.1:8000/create/', formData)
-            .then(response => {
-                // Handle successful response
-                console.log(response.data);
+        // Make a fetch request to your backend endpoint
+        fetch('http://127.0.0.1:8000/create/', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Blog created successfully', data);
+                // Do something with the response data if needed
             })
             .catch(error => {
-                // Handle error response
-                console.error(error);
+                console.error('Error creating blog', error);
+                // Handle the error if needed
             });
     };
+
     return (
         <div>
             <section className="body-font relative max-w-screen-lg mx-auto">
@@ -81,7 +88,7 @@ const BlogCreate = () => {
                             style={{ maxHeight: '300px', maxWidth: '100%' }}
                         />
                     </div>
-                    <form onSubmit={handleFormSubmit} className="mx-auto">
+                    <form className="mx-auto" onSubmit={handleSubmit}>
                         <div className="flex flex-wrap -m-2">
                             <div className='p-2 w-full right-0'>
                                 <h2 className='pb-5'>Select a cover image for your blog</h2>
@@ -89,19 +96,36 @@ const BlogCreate = () => {
                                     type="file"
                                     accept="image/*"
                                     alt="img"
+                                    name="cover_image"
+                                    id="cover_image"
                                     onChange={handleFileChange}
                                     className="mt-1 p-2 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm"
                                 />
                             </div>
                             <div className="p-2 w-full">
                                 <div className="relative">
-                                    <input value={title} onChange={e => setTitle(e.target.value)} type="text" placeholder='Title of your blog' id="title" name="title" className="w-full bg-gray-200 rounded border text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                    <input
+                                        type="text"
+                                        placeholder='Title of your blog'
+                                        id="title"
+                                        name="title"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        className="w-full bg-gray-200 rounded border text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                    />
                                 </div>
                             </div>
                             <div className="p-2 w-full">
                                 <div className="relative">
-                                    <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder='Category of Blog' id="blogCategory" name="blogCategory" className="w-full bg-gray-200 rounded border text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                                </div>
+                                    <input
+                                        type="text"
+                                        placeholder='Category of Blog'
+                                        id="category"
+                                        name="category"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        className="w-full bg-gray-200 rounded border text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                    />                                </div>
                             </div>
                             <div className="p-2 w-full">
                                 <div className="relative text-primary">
