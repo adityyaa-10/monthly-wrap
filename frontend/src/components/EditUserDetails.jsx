@@ -1,16 +1,64 @@
 import defaultpfp from '../assets/Images/defaultpfp.avif'
-import { useState } from 'react'
+import { useState } from 'react';
+
 const EditUserDetails = () => {
     const [profilePicture, setProfilePicture] = useState(null);
+    const [formData, setFormData] = useState({
+        user: '',
+        phone_no: '',
+        email: '',
+        twitter_link: '',
+        github_link: '',
+        linkedin_link: '',
+        about: '',
+        techstack: '',
+        other_interests: ''
+    });
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setProfilePicture(file);
+        setFormData((prevData) => ({
+            ...prevData,
+            profile_picture: file,
+        }));
     };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        // Send the form data to the backend using the Fetch API
+        fetch(`http://127.0.0.1:8000/api/users/profiles/${formData.user}/`, {
+            method: 'PUT',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Handle the response from the backend
+                console.log(data);
+                // Reset the form fields or display a success message
+            })
+            .catch((error) => {
+                // Handle any errors
+                console.error(error);
+            });
+    };
+
     return (
         <section className=" body-font relative max-w-screen-lg mx-auto container px-5 py-11 text-white">
             <h2 className="mb-4 text-4xl font-bold dark:text-white -ml-1">Edit <span className='text-blue'> Profile </span></h2>
-            <form >
+            <form onSubmit={handleSubmit}>
                 <div className="flex flex-col">
                     <div className="mb-6 w-full">
                         <label htmlFor="profile_picture" className="block mb-2 text-base font-semibold">
@@ -35,10 +83,12 @@ const EditUserDetails = () => {
                         <div className="mb-6 w-full md:w-1/2 p-2">
                             <label htmlFor="user" className="block mb-2 text-base font-semibold">Username</label>
                             <input
-                                name='user'
+                                name="user"
                                 id="user"
-                                className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
+                                className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700"
                                 placeholder="Username"
+                                value={formData.user}
+                                onChange={handleInputChange}
                             />
                         </div>
                         <div className="mb-6 w-full md:w-1/2 p-2">
@@ -56,6 +106,7 @@ const EditUserDetails = () => {
                                 id="email"
                                 className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
                                 placeholder="E-Mail"
+                                disabled
                             />
                         </div>
                         <div className="mb-6 w-full md:w-1/2 p-2">
