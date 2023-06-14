@@ -1,75 +1,198 @@
+import { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Link, useNavigate } from "react-router-dom"
-
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginSchema = Yup.object().shape({
     username: Yup.string().required('This field cannot be empty'),
     password: Yup.string().required('Enter your password'),
 });
 
-
 const LoginContainer = () => {
+    const [responseMessage, setResponseMessage] = useState('');
     const navigate = useNavigate();
-    const HandleSubmit = async (values) => {
+    const handleTokenRefresh = async (refreshToken) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/login/', {
+            const refreshResponse = await fetch('http://127.0.0.1:8000/api/users/token/refresh/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify({ refresh: refreshToken }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                const token = data.token; // Assuming the token is returned as 'token' field in the response
+            if (refreshResponse.ok) {
+                const data = await refreshResponse.json();
+                const newAccessToken = data.access;
 
-                // Do something with the token, such as storing it in localStorage or Redux state
-                // For example:
-                localStorage.setItem('token', token);
+                // Update the access token in local storage
+                localStorage.setItem('accessToken', newAccessToken);
 
-                console.log('Login successful');
-                navigate('/home')
-                // Redirect to the home page
+                return newAccessToken;
             } else {
-                console.error('Login failed');
+                throw new Error('Token refresh failed');
             }
         } catch (error) {
-            console.error('An error occurred:', error);
+            throw new Error('Token refresh failed');
         }
     };
+
+    const handleLogin = async (values, { setSubmitting }) => {
+        setSubmitting(true);
+
+        const payload = {
+            username: values.username,
+            password: values.password,
+        };
+
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            const loginResponse = await fetch('http://127.0.0.1:8000/api/users/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (loginResponse.ok) {
+                const data = await loginResponse.json();
+
+                if (data.token) {
+                    localStorage.setItem('loginToken', data.token);
+                    console.log('token:', data.token);
+
+                    setResponseMessage(data.message);
+                    navigate('/home');
+                } else {
+                    setResponseMessage('Please enter a valid username and password');
+                }
+            } else if (loginResponse.status === 401) {
+                // Access token expired, attempt token refreshing
+                const refreshToken = localStorage.getItem('refreshToken');
+
+                if (refreshToken) {
+                    const newAccessToken = await handleTokenRefresh(refreshToken);
+
+                    // Retry the login request with the new access token
+                    const retryResponse = await fetch('http://127.0.0.1:8000/api/users/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${newAccessToken}`,
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    if (retryResponse.ok) {
+                        const data = await retryResponse.json();
+
+                        if (data.token) {
+                            localStorage.setItem('loginToken', data.token);
+                            console.log('token:', data.token);
+
+                            setResponseMessage(data.message);
+                            navigate('/home');
+                        } else {
+                            setResponseMessage('Please enter a valid username and password');
+                        }
+                    } else {
+                        setResponseMessage('An error occurred. Please try again later.');
+                    }
+                } else {
+                    setResponseMessage('Please enter a valid username and password');
+                }
+            } else {
+                setResponseMessage('An error occurred. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setResponseMessage('An error occurred. Please try again later.');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     return (
         <div>
-            <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Log In to your account</h2>
+            <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
+                Log In to your account
+            </h2>
             <Formik
                 initialValues={{
                     username: '',
                     password: '',
                 }}
                 validationSchema={LoginSchema}
-                onSubmit={HandleSubmit}
+                onSubmit={handleLogin}
             >
-                {({ errors, touched }) => (
+                {({ errors, touched, isSubmitting }) => (
                     <Form>
-                        <div className="relative mb-4">
-                            <label htmlFor="username" className="leading-7 text-sm font-medium text-gray-700">Username</label>
-                            <Field placeholder="Userame" name="username" className='w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out' />
-                            {touched.username && errors.username && <div className='text-sm font-normal text-red-600'>{errors.username}</div>}
+                        <div className={`${responseMessage ? 'mb-4' : 'hidden'}`}>
+                            <span
+                                className={`text-sm font-semibold ${responseMessage.includes('successful') ? 'text-green-600' : 'text-red-600'
+                                    }`}
+                            >
+                                {responseMessage}
+                            </span>
                         </div>
                         <div className="relative mb-4">
-                            <label htmlFor="password" className="leading-7 text-sm font-medium text-gray-700">Password</label>
-                            <Field type="password" placeholder="Password" name="password" className='w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out' />
-                            {touched.password && errors.password && <div className='text-sm font-normal text-red-600'>{errors.password}</div>}
+                            <label
+                                htmlFor="username"
+                                className="leading-7 text-sm font-medium text-gray-700"
+                            >
+                                Username
+                            </label>
+                            <Field
+                                placeholder="Userame"
+                                name="username"
+                                className="w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                            {touched.username && errors.username && (
+                                <div className="text-sm font-normal text-red-600">
+                                    {errors.username}
+                                </div>
+                            )}
                         </div>
-                        <div className='relative mb-4'>
-                            <Link to={`/resetpassword`} className='leading-7 text-sm font-semibold text-blue'>Forgot Password?</Link>
+                        <div className="relative mb-4">
+                            <label
+                                htmlFor="password"
+                                className="leading-7 text-sm font-medium text-gray-700"
+                            >
+                                Password
+                            </label>
+                            <Field
+                                type="password"
+                                placeholder="Password"
+                                name="password"
+                                className="w-full bg-white rounded-md border border-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                            {touched.password && errors.password && (
+                                <div className="text-sm font-normal text-red-600">
+                                    {errors.password}
+                                </div>
+                            )}
                         </div>
-                        <button type="submit" className='hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2'>Log In</button>
-                        <div className='color-light pt-4 text-center text-sm'>
+                        <div className="relative mb-4">
+                            <Link
+                                to={`/resetpassword`}
+                                className="leading-7 text-sm font-semibold text-blue"
+                            >
+                                Forgot Password?
+                            </Link>
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2"
+                        >
+                            Log In
+                        </button>
+                        <div className="color-light pt-4 text-center text-sm">
                             Don&apos;t have an account?
                             <Link to={`/signup`}>
-                                <span className='text-blue cursor-pointer pl-1 text-sm font-bold'>
+                                <span className="text-blue cursor-pointer pl-1 text-sm font-bold">
                                     Sign Up
                                 </span>
                             </Link>
@@ -78,7 +201,7 @@ const LoginContainer = () => {
                 )}
             </Formik>
         </div>
-    )
+    );
 };
 
-export default LoginContainer
+export default LoginContainer;
