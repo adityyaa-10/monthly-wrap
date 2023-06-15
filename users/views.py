@@ -29,10 +29,11 @@ class RegisterAPIView(APIView):
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                 }
-
+                serialized_user = RegisterSerializer(user)
                 return Response({
                     'tokens': tokens,
-                    'message': 'Your account has been created successfully!'
+                    'message': 'Your account has been created successfully!',
+                    'user':serialized_user.data
                     }, status=status.HTTP_201_CREATED)
 
             return Response({
