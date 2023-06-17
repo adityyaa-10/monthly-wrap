@@ -6,12 +6,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework import permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Profile
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.settings import api_settings
 from django.contrib.auth import authenticate
 
@@ -88,24 +86,19 @@ class CustomLoginAPIView(APIView):
         else:
             return Response({'error': 'Invalid credentials'})
         
-from .serializers import LogoutSerializer
-
 class LogoutAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request):
-        serializer = LogoutSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        token = serializer.token
-
         try:
-            # Blacklist the provided token
-            RefreshToken(token).blacklist()
+            refresh_token = request.data['refresh_token']
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({'message': 'Logout successful'})
         except Exception as e:
-            return Response({'detail': 'Failed to logout'}, status=400)
-
-        return Response({'detail': 'Successfully logged out'})
-
+            return Response({'error': str(e)})
         
 
 class ChangePasswordAPIView(APIView):
