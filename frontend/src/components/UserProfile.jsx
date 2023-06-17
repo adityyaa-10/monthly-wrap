@@ -1,5 +1,9 @@
 import defaultpfp from '../assets/Images/defaultpfp.avif'
 import { Link } from "react-router-dom"
+import github from '../assets/LandingAssets/github.png'
+import linkedin from '../assets/LandingAssets/linkedin.svg'
+import twitter from '../assets/LandingAssets/twitter.svg'
+
 const UserProfile = () => {
     return (
         <section className="text-white body-font max-w-screen-xl mx-auto">
@@ -9,12 +13,17 @@ const UserProfile = () => {
                         <img className="w-20 h-20 lg:w-32 lg:h-32 rounded-full" src={defaultpfp} alt="Rounded avatar" />
                         <div className="h-1 mt-2 w-20 lg:w-32 bg-blue rounded"></div>
                         <h1 className="sm:text-3xl mt-3 text-2xl font-medium title-font mb-2 text-white">Full Name</h1>
-                        <p className="w-2/3 leading-relaxed text-gray-500">Subtitle Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consequuntur, distinctio obcaecati excepturi blanditiis nihil non alias enim, rem iure fugiat labore pariatur vel dicta quod corporis sapiente dolorem in? Suscipit maxime nemo ipsam.</p>
+                        <p className="w-2/3 leading-relaxed text-gray-500">username</p>
                     </div>
 
                     <div className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-                        <h1 className="sm:text-3xl mt-3 text-2xl font-medium title-font mb-2 text-white">Contact Details</h1>
+                        <h1 className="sm:text-3xl mt-3 text-2xl font-semibold title-font mb-2 text-white">Contact Details</h1>
                         <h1 className=" mt-3 text-base font-semibold title-font mb-2 text-white">E-mail<span className="w-2/3 leading-relaxed text-gray-500"> name@example.com</span></h1>
+                        <div className='flex py-5'>
+                            <img className='w-[30px] h-[30px] object-contain cursor-pointer mr-6' src={github} alt="github_link" />
+                            <img className='w-[30px] h-[30px] object-contain cursor-pointer mr-6' src={linkedin} alt="linkedin_link" />
+                            <img className='w-[30px] h-[30px] object-contain cursor-pointer mr-6' src={twitter} alt="twitter_link" />
+                        </div>
                         <Link to={`/editprofile`}>
                             <button className='bg-blue px-3 mr-2 rounded-md py-2 text-base text-white border border-blue mt-2'>Edit Profile</button>
                         </Link>
