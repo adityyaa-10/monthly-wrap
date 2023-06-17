@@ -2,7 +2,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Link } from "react-router-dom"
 import { useState } from 'react';
-
+import Cookies from 'js-cookie';
 const SignupSchema = Yup.object().shape({
     first_name: Yup.string().required('This field can not be empty'),
     last_name: Yup.string().required('This field can not be empty'),
@@ -20,6 +20,49 @@ const SignupSchema = Yup.object().shape({
 
 const SignupContainer = () => {
     const [responseMessage, setResponseMessage] = useState('');
+
+    const handleSignup = (values, { setSubmitting }) => {
+        // Convert the form values to JSON
+        const data = JSON.stringify(values);
+
+        // Make a POST request to the backend
+        fetch('http://127.0.0.1:8000/api/users/register/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: data,
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Check if the response contains tokens and a message
+                if (data.tokens && data.message) {
+                    // Extract the access token from the response
+                    const accessToken = data.tokens.access;
+                    const refreshToken = data.tokens.refresh;
+
+                    // Store the tokens securely on the client-side (e.g., in secure HTTP-only cookies or local storage)
+                    // You can use a library like js-cookie or implement the storage mechanism yourself
+                    // Example using js-cookie:
+                    Cookies.set('accessToken', accessToken, { secure: true, sameSite: 'strict' });
+                    Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'strict' });
+
+                    // Set the response message in the state
+                    setResponseMessage(data.message);
+                } else {
+                    // Set an error message in the state if the response is not as expected
+                    setResponseMessage('Invalid response from the server');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Set an error message in the state if something went wrong
+                setResponseMessage('An error occurred. Please try again later.');
+            })
+            .finally(() => {
+                setSubmitting(false);
+            });
+    };
     return (
         <div>
             <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Sign Up</h2>
@@ -33,48 +76,7 @@ const SignupContainer = () => {
                     password2: '',
                 }}
                 validationSchema={SignupSchema}
-                onSubmit={(values, { setSubmitting }) => {
-                    // Convert the form values to JSON
-                    const data = JSON.stringify(values);
-
-                    // Make a POST request to the backend
-                    fetch('http://127.0.0.1:8000/api/users/register/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: data,
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Check if the response contains tokens and a message
-                            if (data.tokens && data.message) {
-                                // Extract the access token from the response
-                                const accessToken = data.tokens.access;
-                                const refreshToken = data.tokens.refresh;
-                                // Store the access token in localStorage
-                                localStorage.setItem('accessToken', accessToken);
-                                localStorage.setItem('refreshToken', refreshToken);
-                                // Log the access token to the console
-                                console.log('Access Token:', accessToken);
-
-                                // Set the response message in the state
-                                setResponseMessage(data.message);
-                            } else {
-                                // Set an error message in the state if the response is not as expected
-                                setResponseMessage('Invalid response from the server');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            // Set an error message in the state if something went wrong
-                            setResponseMessage('An error occurred. Please try again later.');
-                        })
-                        .finally(() => {
-                            setSubmitting(false);
-                        });
-                }}
-
+                onSubmit={handleSignup}
             >
                 {({ errors, touched }) => (
                     <Form>

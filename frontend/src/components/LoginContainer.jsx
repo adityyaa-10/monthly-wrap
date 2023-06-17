@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const LoginSchema = Yup.object().shape({
     username: Yup.string().required('This field cannot be empty'),
@@ -11,6 +12,7 @@ const LoginSchema = Yup.object().shape({
 const LoginContainer = () => {
     const [responseMessage, setResponseMessage] = useState('');
     const navigate = useNavigate();
+
     const handleTokenRefresh = async (refreshToken) => {
         try {
             const refreshResponse = await fetch('http://127.0.0.1:8000/api/users/token/refresh/', {
@@ -19,14 +21,12 @@ const LoginContainer = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ refresh: refreshToken }),
+                credentials: 'include', // Include cookies in the request
             });
 
             if (refreshResponse.ok) {
                 const data = await refreshResponse.json();
                 const newAccessToken = data.access;
-
-                // Update the access token in local storage
-                localStorage.setItem('accessToken', newAccessToken);
 
                 return newAccessToken;
             } else {
@@ -46,23 +46,19 @@ const LoginContainer = () => {
         };
 
         try {
-            const accessToken = localStorage.getItem('accessToken');
             const loginResponse = await fetch('http://127.0.0.1:8000/api/users/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify(payload),
+                credentials: 'include', // Include cookies in the request
             });
 
             if (loginResponse.ok) {
                 const data = await loginResponse.json();
 
                 if (data.token) {
-                    localStorage.setItem('loginToken', data.token);
-                    console.log('token:', data.token);
-
                     setResponseMessage(data.message);
                     navigate('/home');
                 } else {
@@ -70,7 +66,7 @@ const LoginContainer = () => {
                 }
             } else if (loginResponse.status === 401) {
                 // Access token expired, attempt token refreshing
-                const refreshToken = localStorage.getItem('refreshToken');
+                const refreshToken = Cookies.get('refreshToken');
 
                 if (refreshToken) {
                     const newAccessToken = await handleTokenRefresh(refreshToken);
@@ -83,15 +79,13 @@ const LoginContainer = () => {
                             'Authorization': `Bearer ${newAccessToken}`,
                         },
                         body: JSON.stringify(payload),
+                        credentials: 'include', // Include cookies in the request
                     });
 
                     if (retryResponse.ok) {
                         const data = await retryResponse.json();
 
                         if (data.token) {
-                            localStorage.setItem('loginToken', data.token);
-                            console.log('token:', data.token);
-
                             setResponseMessage(data.message);
                             navigate('/home');
                         } else {
@@ -113,7 +107,6 @@ const LoginContainer = () => {
             setSubmitting(false);
         }
     };
-
     return (
         <div>
             <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
