@@ -25,7 +25,7 @@ const ProfileDropdown = () => {
                 navigate('/');
             } else if (response.status === 401) {
                 const refreshResponse = await fetch(
-                    'http://127.0.0.1:8000/api/users/refresh_token/',
+                    'http://127.0.0.1:8000/api/users/token/refresh',
                     {
                         method: 'POST',
                         headers: {
