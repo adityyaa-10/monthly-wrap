@@ -11,6 +11,10 @@ from rest_framework import permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Profile
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.settings import api_settings
+from django.contrib.auth import authenticate
+
 
 
 class RegisterAPIView(APIView):
@@ -62,25 +66,27 @@ class ProfileAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
-
+    
 class CustomLoginAPIView(APIView):
+    permission_classes = [permissions.AllowAny,]
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.AllowAny]
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
 
         # Manually check the user's credentials
-        try:
-            user = User.objects.get(username=username)
-            if user.check_password(password):
-                # Create a new token for the authenticated user
-                token, _ = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key, 'message': 'Login successful'})
-            else:
-                return Response({'error': 'Invalid credentials'})
-        except User.DoesNotExist:
-            return Response({'error': 'DoesNotExist'})
+        user = authenticate(request, username=username, password=password)
+        if user:
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            return Response({
+                'access_token': access_token,
+                'refresh_token': str(refresh),
+                'message': 'Login successful'
+            })
+        else:
+            return Response({'error': 'Invalid credentials'})
         
 from .serializers import LogoutSerializer
 
