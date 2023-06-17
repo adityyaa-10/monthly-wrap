@@ -1,8 +1,36 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import defaultpfp from '../assets/Images/defaultpfp.avif'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie';
 const ProfileDropdown = () => {
+    const navigate = useNavigate();
+    const handleLogout = async () => {
+        try {
+            // Fetch API request to logout endpoint
+            const response = await fetch('http://127.0.0.1:8000/api/users/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${Cookies.get('accessToken')}`, // Include the access token in the Authorization header
+                },
+                body: JSON.stringify({
+                    refresh_token: Cookies.get('refreshToken'), // Include the refresh token in the request body
+                }),
+            });
+
+            if (response.ok) {
+                navigate('/');
+            } else {
+                // Handle error response
+                // Example:
+                const errorData = await response.json();
+                console.log(errorData);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div className="">
             <Menu as="div" className="relative inline-block text-left ">
@@ -57,6 +85,7 @@ const ProfileDropdown = () => {
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
+                                        onClick={handleLogout}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
