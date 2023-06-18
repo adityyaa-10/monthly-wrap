@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import defaultblogpic from '../assets/Images/selectcover.png'
 import JoditEditor from "jodit-react";
-
+import Cookies from 'js-cookie';
 const BlogCreate = () => {
     const [logs, setLogs] = useState([]);
     const [coverImage, setCoverImage] = useState(null);
@@ -49,31 +49,63 @@ const BlogCreate = () => {
         [appendLog, setContent]
     );
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Create a FormData object to store the form data
         const formData = new FormData();
         formData.append('title', title);
         formData.append('category', category);
         formData.append('content', content);
         formData.append('cover_image', coverImage);
 
-        // Make a fetch request to your backend endpoint
-        fetch('http://127.0.0.1:8000/create/', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/create/', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('new_access_token')}`,
+                },
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
                 console.log('Blog created successfully', data);
                 // Do something with the response data if needed
-            })
-            .catch(error => {
-                console.error('Error creating blog', error);
+            } else if (response.status === 401) {
+                const new_refresh_token = Cookies.get('new_refresh_token')
+                const refreshResponse = await fetch(
+                    'http://127.0.0.1:8000/api/users/token/refresh/',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ refresh: new_refresh_token }),
+                        credentials: 'include', // Include cookies in the request
+                    });
+
+                if (refreshResponse.ok) {
+                    const data = await refreshResponse.json();
+                    const newAccessToken = data.access_token;
+                    Cookies.set('new_access_token', newAccessToken);
+                    handleSubmit(e); // Retry the form submission with the new access token
+                } else {
+                    // Refresh token failed or expired, handle error
+                    // ...
+                }
+            } else {
+                // Handle other error responses
+                // Example:
+                const errorData = await response.json();
+                console.error('Error creating blog', errorData);
                 // Handle the error if needed
-            });
+            }
+        } catch (error) {
+            console.error('Error creating blog', error);
+            // Handle the error if needed
+        }
     };
+
 
     return (
         <div>

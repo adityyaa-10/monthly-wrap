@@ -7,22 +7,46 @@ const ProfileDropdown = () => {
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
-            // Fetch API request to logout endpoint
-            const response = await fetch('http://127.0.0.1:8000/api/users/logout/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${Cookies.get('accessToken')}`, // Include the access token in the Authorization header
-                },
-                body: JSON.stringify({
-                    refresh_token: Cookies.get('refreshToken'), // Include the refresh token in the request body
-                }),
-            });
+            const response = await fetch(
+                'http://127.0.0.1:8000/api/users/logout/',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${Cookies.get('new_access_token')}`,
+                    },
+                    body: JSON.stringify({
+                        refresh_token: Cookies.get('new_refresh_token'),
+                    }),
+                }
+            );
 
             if (response.ok) {
                 navigate('/');
+            } else if (response.status === 401) {
+                const new_refresh_token = Cookies.get('new_refresh_token')
+                const refreshResponse = await fetch(
+                    'http://127.0.0.1:8000/api/users/token/refresh/',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ refresh: new_refresh_token }),
+                        credentials: 'include', // Include cookies in the request
+                    });
+
+                if (refreshResponse.ok) {
+                    const data = await refreshResponse.json();
+                    const newAccessToken = data.access_token;
+                    Cookies.set('new_access_token', newAccessToken);
+                    handleLogout(); // Retry the logout request with the new access token
+                } else {
+                    // Refresh token failed or expired, handle error
+                    // ...
+                }
             } else {
-                // Handle error response
+                // Handle other error responses
                 // Example:
                 const errorData = await response.json();
                 console.log(errorData);

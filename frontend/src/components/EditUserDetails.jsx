@@ -1,12 +1,10 @@
 import defaultpfp from '../assets/Images/defaultpfp.avif'
 import { useState } from 'react';
-
+import Cookies from 'js-cookie';
 const EditUserDetails = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const [formData, setFormData] = useState({
         user: '',
-        phone_no: '',
-        email: '',
         twitter_link: '',
         github_link: '',
         linkedin_link: '',
@@ -32,28 +30,61 @@ const EditUserDetails = () => {
         }));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Send the form data to the backend using the Fetch API
-        fetch(`http://127.0.0.1:8000/api/users/profiles/${formData.user}/`, {
-            method: 'PUT',
-            body: JSON.stringify(formData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                // Handle the response from the backend
+        try {
+            const response = await fetch(
+                `http://127.0.0.1:8000/api/users/profiles/${formData.user}/`,
+                {
+                    method: 'PUT',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${Cookies.get('new_access_token')}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
                 console.log(data);
                 // Reset the form fields or display a success message
-            })
-            .catch((error) => {
-                // Handle any errors
-                console.error(error);
-            });
+            } else if (response.status === 401) {
+                const new_refresh_token = Cookies.get('new_refresh_token')
+                const refreshResponse = await fetch(
+                    'http://127.0.0.1:8000/api/users/token/refresh/',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ refresh: new_refresh_token }),
+                        credentials: 'include', // Include cookies in the request
+                    });
+
+                if (refreshResponse.ok) {
+                    const refreshData = await refreshResponse.json();
+                    const newAccessToken = refreshData.access_token;
+                    Cookies.set('new_access_token', newAccessToken);
+                    handleSubmit(event); // Retry the form submission with the new access token
+                } else {
+                    // Refresh token failed or expired, handle error
+                    // ...
+                }
+            } else {
+                // Handle other error responses
+                // Example:
+                const errorData = await response.json();
+                console.error(errorData);
+                // Handle the error if needed
+            }
+        } catch (error) {
+            console.error(error);
+            // Handle the error if needed
+        }
     };
+
 
     return (
         <section className=" body-font relative max-w-screen-lg mx-auto container px-5 py-11 text-white">
@@ -89,24 +120,6 @@ const EditUserDetails = () => {
                                 placeholder="Username"
                                 value={formData.user}
                                 onChange={handleInputChange}
-                            />
-                        </div>
-                        <div className="mb-6 w-full md:w-1/2 p-2">
-                            <label htmlFor="phone_no" className="block mb-2 text-base font-semibold">Phone Number</label>
-                            <input
-                                name='phone_no'
-                                id="phone_no"
-                                className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
-                                placeholder="Phone number" />
-                        </div>
-                        <div className="mb-6 w-full md:w-1/2 p-2">
-                            <label htmlFor="email" className="block mb-2 text-base font-semibold">E-Mail</label>
-                            <input
-                                type="email"
-                                id="email"
-                                className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
-                                placeholder="E-Mail"
-                                disabled
                             />
                         </div>
                         <div className="mb-6 w-full md:w-1/2 p-2">

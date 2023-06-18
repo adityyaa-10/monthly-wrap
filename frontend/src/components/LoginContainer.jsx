@@ -58,9 +58,17 @@ const LoginContainer = () => {
             if (loginResponse.ok) {
                 const data = await loginResponse.json();
 
-                if (data.token) {
+                if (data.access_token && data.refresh_token && data.message) {
                     setResponseMessage(data.message);
                     navigate('/home');
+                    console.log(data.access_token)
+                    console.log(data.refresh_token)
+                    const new_access_token = data.access_token;
+                    const new_refresh_token = data.refresh_token;
+
+                    Cookies.set('new_access_token', new_access_token, { secure: true, sameSite: 'strict' });
+                    Cookies.set('new_refresh_token', new_refresh_token, { secure: true, sameSite: 'strict' });
+
                 } else {
                     setResponseMessage('Please enter a valid username and password');
                 }
