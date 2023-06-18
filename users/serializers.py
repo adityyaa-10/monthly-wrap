@@ -14,7 +14,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     profile_picture = serializers.ImageField(required = False)
     class Meta:
         model = Profile
-        exclude = ('name','email',)
+        fields = '__all__'
 
 
 class RegisterSerializer(serializers.ModelSerializer):
