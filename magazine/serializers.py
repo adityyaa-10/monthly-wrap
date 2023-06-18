@@ -12,13 +12,20 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Image
         fields = ('id', 'image',)
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source = 'user.username')
+    class Meta:
+        model = Comment
+        fields = ('id', 'user', 'post', 'content', 'date_posted')
+
 
 class BlogPostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.username')
     images = ImageSerializer(many=True, read_only=True, required = False)
+    comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = BlogPost
-        fields = ('id','title', 'content', 'date_posted','user', 'likes_count', 'category','cover_image','images',)
+        fields = ('id','title', 'content', 'date_posted','user', 'likes_count', 'category','cover_image','images','comments')
 
 
 class LikesSerializer(serializers.ModelSerializer):
@@ -26,11 +33,7 @@ class LikesSerializer(serializers.ModelSerializer):
         model = Likes
         fields = ('id', 'user', 'post')
 
-class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source = 'user.username')
-    class Meta:
-        model = Comment
-        fields = ('id', 'user', 'post', 'content', 'date_posted')
+
 
 
 class ContactSerializer(serializers.ModelSerializer):

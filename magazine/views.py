@@ -145,12 +145,9 @@ class LikesAPIView(APIView):
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class CommentAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-
-
     def get_object(self, slug):
         try:
             return BlogPost.objects.get(slug = slug)
@@ -169,14 +166,13 @@ class CommentAPIView(APIView):
         post = self.get_object(slug)
         if post is None:
             return Response({'error': 'Post not found'}, status = status.HTTP_404_NOT_FOUND)
-        data = {
-            'user': request.user.id,
-            'post': post.id,
-            'content': request.data.get('content')
-        }
+        data = request.data
+        data['post'] = post.id
+        data['user'] = request.user.id
+
         serializer = CommentSerializer(data = data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     
