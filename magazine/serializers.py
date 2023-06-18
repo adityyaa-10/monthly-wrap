@@ -31,3 +31,10 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'user', 'post', 'content', 'date_posted')
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
+    class Meta:
+        model = Contact
+        fields = ('user','subject', 'message', 'date_posted')

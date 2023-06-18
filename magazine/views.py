@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from .serializers import *
 from rest_framework import status
-from .serializers import BlogPostSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
@@ -180,3 +179,16 @@ class CommentAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+
+class ContactAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    
+    def post(self, request):
+        data = request.data
+        data["user"] = request.user.username
+        serializer = ContactSerializer(data=data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
