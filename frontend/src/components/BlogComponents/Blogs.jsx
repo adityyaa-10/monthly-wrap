@@ -1,61 +1,81 @@
-import { useState } from 'react';
-import EachBlogCard from './EachBlogCard';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router-dom'
 import { Player } from '@lottiefiles/react-lottie-player';
-import { useNavigate } from 'react-router-dom';
 
-const Blogs = () => {
-    const blogdetails = [
-        {
-            title: 'pehla title',
-            category: 'first',
-            author: 'aditya pandey',
-            id: 0,
-        },
-        {
-            title: 'dusra title',
-            category: 'second',
-            author: 'adi',
-            id: 1,
-        },
-        {
-            title: 'teesra title',
-            category: 'third',
-            author: 'pandey',
-            id: 2,
-        },
-    ];
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const filteredBlogs = blogdetails.filter((blog) =>
-        blog.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+const BlogList = (props) => {
+    const [blogs, setBlogs] = useState([]);
+    const { title, category, author } = props;
+    const [isReadMore, setIsReadMore] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const navigate = useNavigate();
 
-    const getBlog = (id) => {
-        const blog = filteredBlogs.find((blog) => blog.id === id);
-        if (blog) {
-            navigate(`/blogs/${id}`, {
-                state: {
-                    ...blog,
-                    author: capitalizeFirstLetter(blog.author),
-                    category: capitalizeFirstLetter(blog.category),
+    const toggleReadMore = () => {
+        setIsReadMore(!isReadMore);
+    };
+
+    const openFullBlog = () => {
+        navigate(`/blogs/${title}/${author}/${category}`);
+    };
+
+    const fetchBlogs = async () => {
+        try {
+            const accessToken = Cookies.get('new_access_token');
+
+            const response = await fetch('http://127.0.0.1:8000/', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
                 },
             });
+
+            if (response.status === 401) {
+                refreshAccessToken();
+            } else if (!response.ok) {
+                throw new Error('Failed to fetch blogs');
+            } else {
+                const data = await response.json();
+                setBlogs(data.reverse());
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 
-    const capitalizeFirstLetter = (str) => {
-        return str
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+    const refreshAccessToken = async () => {
+        try {
+            const refreshToken = Cookies.get('refresh_token');
+
+            const response = await fetch('http://127.0.0.1:8000/api/users/token/refresh/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ refresh_token: refreshToken }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to refresh access token');
+            }
+
+            const data = await response.json();
+
+            Cookies.set('access_token', data.access_token);
+
+            fetchBlogs();
+        } catch (error) {
+            console.error(error);
+        }
     };
 
+    useEffect(() => {
+        fetchBlogs();
+    },);
+
+    const filteredBlogs = blogs.filter((blog) =>
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <section className="max-w-screen-xl mx-auto body-font">
             <div className="px-auto py-11">
@@ -86,21 +106,75 @@ const Blogs = () => {
                             type="text"
                             placeholder="Search By Title"
                             value={searchTerm}
-                            onChange={handleSearch}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                 </div>
-                <div className="flex flex-wrap mx-auto">
+                <div className='flex flex-wrap mx-auto'>
                     {filteredBlogs.length > 0 ? (
                         filteredBlogs.map((blog) => (
-                            <EachBlogCard
-                                {...blog}
-                                key={blog.id}
-                                getBlog={getBlog}
-                                title={blog.title.toUpperCase()}
-                                category={capitalizeFirstLetter(blog.category)}
-                                author={capitalizeFirstLetter(blog.author)}
-                            />
+                            <section key={blog.id} className='w-full md:w-1/2 xl:w-1/3'>
+                                <div className="p-4">
+                                    <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+                                        <img
+                                            className="lg:h-48 md:h-36 w-full object-cover object-center"
+                                            src={blog.cover_image}
+                                            alt="Cover Image"
+                                        />
+                                        <div className="flex items-center justify-center">
+                                            <h2 className="text-lg font-medium text-white mx-auto mt-4">{blog.title.toUpperCase()}</h2>
+                                        </div>
+                                        <div className="p-6">
+                                            <h2 className="tracking-widest text-xs font-medium text-white mb-1">{blog.category.toUpperCase()}</h2>
+                                            <div className="leading-relaxed mb-3">
+                                                {isReadMore
+                                                    ? 'Expanded content of the blog post goes here.'
+                                                    : 'Shortened content of the blog post goes here.'}
+                                            </div>
+                                            <div className="flex items-center flex-wrap">
+                                                {isReadMore ? (
+                                                    <button
+                                                        className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
+                                                        onClick={toggleReadMore}
+                                                    >
+                                                        Read Less
+                                                        <svg
+                                                            className="w-4 h-4 ml-2"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                            fill="none"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        >
+                                                            <path d="M5 12h14"></path>
+                                                        </svg>
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
+                                                        onClick={openFullBlog}
+                                                    >
+                                                        Read More
+                                                        <svg
+                                                            className="w-4 h-4 ml-2"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                            fill="none"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        >
+                                                            <path d="M5 12h14"></path>
+                                                            <path d="M12 5l7 7-7 7"></path>
+                                                        </svg>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
                         ))
                     ) : (
                         <div className="lg:w-[65%] w-full md:pr-16 lg:pr-0 pr-0 lg:block mx-auto">
@@ -112,10 +186,17 @@ const Blogs = () => {
                             ></Player>
                         </div>
                     )}
+
                 </div>
             </div>
         </section>
     );
 };
 
-export default Blogs;
+export default BlogList;
+
+BlogList.propTypes = {
+    title: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired
+};
