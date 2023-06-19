@@ -1,30 +1,19 @@
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
 import { Player } from '@lottiefiles/react-lottie-player';
+import { Link } from 'react-router-dom';
 
-const BlogList = (props) => {
+const BlogList = () => {
     const [blogs, setBlogs] = useState([]);
-    const { title, category, author } = props;
-    const [isReadMore, setIsReadMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const navigate = useNavigate();
-
-    const toggleReadMore = () => {
-        setIsReadMore(!isReadMore);
-    };
-
-    const openFullBlog = () => {
-        navigate(`/blogs/${title}/${author}/${category}`);
-    };
 
     const fetchBlogs = async () => {
         try {
             const accessToken = Cookies.get('new_access_token');
 
             const response = await fetch('http://127.0.0.1:8000/', {
+                method: 'GET',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -45,7 +34,7 @@ const BlogList = (props) => {
 
     const refreshAccessToken = async () => {
         try {
-            const refreshToken = Cookies.get('refresh_token');
+            const refreshToken = Cookies.get('new_refresh_token');
 
             const response = await fetch('http://127.0.0.1:8000/api/users/token/refresh/', {
                 method: 'POST',
@@ -126,50 +115,15 @@ const BlogList = (props) => {
                                         </div>
                                         <div className="p-6">
                                             <h2 className="tracking-widest text-xs font-medium text-white mb-1">{blog.category.toUpperCase()}</h2>
-                                            <div className="leading-relaxed mb-3">
-                                                {isReadMore
-                                                    ? 'Expanded content of the blog post goes here.'
-                                                    : 'Shortened content of the blog post goes here.'}
+                                            <h1 className="text-base font-medium text-indigo-500 py-2"><span className='text-dimWhite'>by </span> {blog.user.toLowerCase()}</h1>
+                                            <div className="leading-relaxed mb-3" dangerouslySetInnerHTML={{ __html: `${blog.content.split(' ').slice(0, 7).join(' ')}...` }}>
                                             </div>
                                             <div className="flex items-center flex-wrap">
-                                                {isReadMore ? (
-                                                    <button
-                                                        className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
-                                                        onClick={toggleReadMore}
-                                                    >
-                                                        Read Less
-                                                        <svg
-                                                            className="w-4 h-4 ml-2"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                            fill="none"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        >
-                                                            <path d="M5 12h14"></path>
-                                                        </svg>
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0"
-                                                        onClick={openFullBlog}
-                                                    >
-                                                        Read More
-                                                        <svg
-                                                            className="w-4 h-4 ml-2"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                            fill="none"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        >
-                                                            <path d="M5 12h14"></path>
-                                                            <path d="M12 5l7 7-7 7"></path>
-                                                        </svg>
-                                                    </button>
-                                                )}
+
+                                                <Link to={`/home/${blog.title.replace(/\s+/g, '-')}`} className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">
+                                                    Read More
+                                                </Link>
+
                                             </div>
                                         </div>
                                     </div>
@@ -194,9 +148,3 @@ const BlogList = (props) => {
 };
 
 export default BlogList;
-
-BlogList.propTypes = {
-    title: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired
-};
