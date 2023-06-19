@@ -81,11 +81,12 @@ class CustomLoginAPIView(APIView):
         if user:
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-
+            user_serializer = RegisterSerializer(user)
             return Response({
                 'access_token': access_token,
                 'refresh_token': str(refresh),
-                'message': 'Login successful'
+                'message': 'Login successful',
+                'username': user_serializer.data['username'],
             })
         else:
             return Response({'error': 'Invalid credentials'})
