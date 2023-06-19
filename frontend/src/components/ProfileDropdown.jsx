@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import defaultpfp from '../assets/Images/defaultpfp.avif'
 import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie';
-const ProfileDropdown = () => {
+const ProfileDropdown = (user) => {
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
@@ -76,7 +76,7 @@ const ProfileDropdown = () => {
                         <div className="px-1 py-1 ">
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/userdashboard`}
+                                    <Link to={`/${user}`}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
