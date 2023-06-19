@@ -1,7 +1,8 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Link } from "react-router-dom"
-import { useState } from 'react'
+import { useState } from 'react';
+import Cookies from 'js-cookie';
 const SignupSchema = Yup.object().shape({
     first_name: Yup.string().required('This field can not be empty'),
     last_name: Yup.string().required('This field can not be empty'),
@@ -18,36 +19,53 @@ const SignupSchema = Yup.object().shape({
 });
 
 const SignupContainer = () => {
-    const [signupError, setSignupError] = useState(null);
-    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [responseMessage, setResponseMessage] = useState('');
 
-    const handleSubmit = async (values) => {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/register/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
+    const handleSignup = (values, { setSubmitting }) => {
+        // Convert the form values to JSON
+        const data = JSON.stringify(values);
+
+        // Make a POST request to the backend
+        fetch('http://127.0.0.1:8000/api/users/register/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: data,
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Check if the response contains tokens and a message
+                if (data.tokens && data.message) {
+                    // Extract the access token from the response
+                    const accessToken = data.tokens.access;
+                    const refreshToken = data.tokens.refresh;
+
+                    // Store the tokens securely on the client-side (e.g., in secure HTTP-only cookies or local storage)
+                    // You can use a library like js-cookie or implement the storage mechanism yourself
+                    // Example using js-cookie:
+                    Cookies.set('accessToken', accessToken, { secure: true, sameSite: 'strict' });
+                    Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'strict' });
+
+                    // Set the response message in the state
+                    setResponseMessage(data.message);
+                } else {
+                    // Set an error message in the state if the response is not as expected
+                    setResponseMessage('Invalid response from the server');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Set an error message in the state if something went wrong
+                setResponseMessage('An error occurred. Please try again later.');
+            })
+            .finally(() => {
+                setSubmitting(false);
             });
-            console.log(JSON.stringify(values));
-            if (!response.ok) {
-                throw new Error('Sign up request failed');
-            }
-
-            setSignupSuccess(true);
-            setSignupError(null);
-        } catch (error) {
-            setSignupSuccess(false);
-            setSignupError('Something Went Wrong');
-        }
     };
     return (
         <div>
             <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Sign Up</h2>
-            {signupSuccess && <div className='text-green-500 text-sm font-normal'>Signup successful! Proceed to Login Page</div>}
-            {signupError && <div className='text-red-600 font-normal text-sm'>Error: {signupError}</div>}
-
             <Formik
                 initialValues={{
                     first_name: '',
@@ -58,7 +76,7 @@ const SignupContainer = () => {
                     password2: '',
                 }}
                 validationSchema={SignupSchema}
-                onSubmit={handleSubmit}
+                onSubmit={handleSignup}
             >
                 {({ errors, touched }) => (
                     <Form>
@@ -93,6 +111,7 @@ const SignupContainer = () => {
                             {touched.password2 && errors.password2 && <div className='text-sm font-normal text-red-600'>{errors.password2}</div>}
                         </div>
                         <button type="submit" className='hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2'>Sign Up</button>
+                        {responseMessage && <div className='py-3 mb-1 text-green-600 text-sm font-semibold'>{responseMessage}</div>}
                         <div className='color-light pt-4 text-center text-sm'>
                             Already have an Account?
                             <Link to={`/login`}>

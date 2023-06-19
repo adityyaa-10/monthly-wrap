@@ -1,8 +1,60 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import defaultpfp from '../assets/Images/defaultpfp.avif'
-import { Link } from 'react-router-dom'
-const ProfileDropdown = () => {
+import { Link, useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie';
+const ProfileDropdown = (user) => {
+    const navigate = useNavigate();
+    const handleLogout = async () => {
+        try {
+            const response = await fetch(
+                'http://127.0.0.1:8000/api/users/logout/',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${Cookies.get('new_access_token')}`,
+                    },
+                    body: JSON.stringify({
+                        refresh_token: Cookies.get('new_refresh_token'),
+                    }),
+                }
+            );
+
+            if (response.ok) {
+                navigate('/');
+            } else if (response.status === 401) {
+                const new_refresh_token = Cookies.get('new_refresh_token')
+                const refreshResponse = await fetch(
+                    'http://127.0.0.1:8000/api/users/token/refresh/',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ refresh: new_refresh_token }),
+                        credentials: 'include', // Include cookies in the request
+                    });
+
+                if (refreshResponse.ok) {
+                    const data = await refreshResponse.json();
+                    const newAccessToken = data.access_token;
+                    Cookies.set('new_access_token', newAccessToken);
+                    handleLogout(); // Retry the logout request with the new access token
+                } else {
+                    // Refresh token failed or expired, handle error
+                    // ...
+                }
+            } else {
+                // Handle other error responses
+                // Example:
+                const errorData = await response.json();
+                console.log(errorData);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div className="">
             <Menu as="div" className="relative inline-block text-left ">
@@ -24,7 +76,7 @@ const ProfileDropdown = () => {
                         <div className="px-1 py-1 ">
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/userdashboard`}
+                                    <Link to={`/${user}`}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
@@ -57,6 +109,7 @@ const ProfileDropdown = () => {
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
+                                        onClick={handleLogout}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >

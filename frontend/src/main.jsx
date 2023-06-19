@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     element: <ContactUs />
   },
   {
-    path: "/userdashboard",
+    path: "/:user",
     element: <UserDashboard />
   },
   {
@@ -56,7 +56,7 @@ const router = createBrowserRouter([
     element: <ResetPassword />
   },
   {
-    path: "/blogs/:title/:author/:category",
+    path: "/home/:title",
     element: <FullBlogPage />
   }
 ]);
