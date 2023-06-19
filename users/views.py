@@ -57,12 +57,16 @@ class ProfileAPIView(APIView):
         return Response(serializer.data)
 
     def put(self, request, username):
+        if request.user.username != username:
+            return Response({'detail': 'You do not have permission to edit this profile.'}, status=status.HTTP_403_FORBIDDEN)
+
+
         profile = get_object_or_404(Profile, user__username=username)
         serializer = ProfileSerializer(profile, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
 class CustomLoginAPIView(APIView):
