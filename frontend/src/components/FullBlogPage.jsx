@@ -1,30 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import reactbg from '../assets/Images/react.png';
+import Cookies from 'js-cookie';
 
 const FullBlogPage = () => {
-    const { title, category, author } = useParams();
+    const { title } = useParams();
     const navigate = useNavigate();
-
-    const [comment, setComment] = useState('');
-    const [likes, setLikes] = useState(0);
-
+    const [author, setAuthor] = useState('');
+    const [category, setCategory] = useState('');
+    const [fullBlogContent, setFullBlogContent] = useState('');
     // Fetch the full blog content, comments, and likes from your API or data source
-    const fullBlogContent = "This is the full content of the blog post.";
-    const comments = []; // An array to store comments
-    const handleCommentChange = (e) => {
-        setComment(e.target.value);
-    };
+    useEffect(() => {
+        const fetchBlogDetail = async () => {
+            try {
+                const new_access_token = Cookies.get('new_access_token');
 
-    const addComment = () => {
-        if (comment.trim() !== '') {
-            comments.push(comment);
-            setComment('');
+                const response = await fetch(`http://127.0.0.1:8000/${title}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${new_access_token}`,
+                    },
+                });
+
+                if (response.status === 401) {
+                    await refreshAccessToken();
+                    fetchBlogDetail(); // Retry fetching blog detail after token refresh
+                } else if (!response.ok) {
+                    throw new Error('Failed to fetch blog detail');
+                } else {
+                    const data = await response.json();
+                    setAuthor(data.user);
+                    setCategory(data.category);
+                    setFullBlogContent(data.content);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchBlogDetail();
+    }, [title]);
+
+    const refreshAccessToken = async () => {
+        try {
+            const refreshToken = Cookies.get('new_refresh_token');
+
+            const response = await fetch('http://127.0.0.1:8000/api/users/token/refresh/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ refresh_token: refreshToken }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to refresh access token');
+            }
+
+            const data = await response.json();
+            setAuthor(data.author);
+            setCategory(data.category);
+            setFullBlogContent(data.content);
+            Cookies.set('new_access_token', data.access_token);
+        } catch (error) {
+            console.error(error);
         }
-    };
-
-    const incrementLikes = () => {
-        setLikes(likes + 1);
     };
 
     const goBack = () => {
@@ -44,45 +85,7 @@ const FullBlogPage = () => {
                 <h1 className="text-3xl font-bold mb-4">{title}</h1>
                 <h2 className="text-xl font-medium mb-4">Category: {category}</h2>
                 <h3 className="text-lg mb-4">Author: {author}</h3>
-                <p className="text-base leading-7 mb-8">{fullBlogContent}</p>
-
-                <div className="mb-6">
-                    <h4 className="text-lg font-medium mb-2">Comments:</h4>
-                    {comments.length > 0 ? (
-                        comments.map((comment, index) => (
-                            <div key={index} className="mb-2">
-                                {comment}
-                            </div>
-                        ))
-                    ) : (
-                        <p>No comments yet.</p>
-                    )}
-                </div>
-
-                <div className="flex items-center mb-4">
-                    <button
-                        onClick={incrementLikes}
-                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded mr-2"
-                    >
-                        Like
-                    </button>
-                    <span>{likes}</span>
-                </div>
-
-                <div className="mb-4">
-                    <textarea
-                        value={comment}
-                        onChange={handleCommentChange}
-                        placeholder="Write a comment..."
-                        className="w-full border border-gray-300 rounded p-2"
-                    ></textarea>
-                </div>
-                <button
-                    onClick={addComment}
-                    className="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded"
-                >
-                    Add Comment
-                </button>
+                <p className="text-base leading-7 mb-8" dangerouslySetInnerHTML={{ __html: fullBlogContent }}></p>
             </div>
         </div>
     );

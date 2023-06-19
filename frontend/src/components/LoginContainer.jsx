@@ -74,7 +74,7 @@ const LoginContainer = () => {
                 }
             } else if (loginResponse.status === 401) {
                 // Access token expired, attempt token refreshing
-                const refreshToken = Cookies.get('refreshToken');
+                const refreshToken = Cookies.get('new_refresh_token');
 
                 if (refreshToken) {
                     const newAccessToken = await handleTokenRefresh(refreshToken);
