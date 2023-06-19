@@ -57,12 +57,16 @@ class ProfileAPIView(APIView):
         return Response(serializer.data)
 
     def put(self, request, username):
+        if request.user.username != username:
+            return Response({'detail': 'You do not have permission to edit this profile.'}, status=status.HTTP_403_FORBIDDEN)
+
+
         profile = get_object_or_404(Profile, user__username=username)
         serializer = ProfileSerializer(profile, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
 class CustomLoginAPIView(APIView):
@@ -77,11 +81,12 @@ class CustomLoginAPIView(APIView):
         if user:
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-
+            user_serializer = RegisterSerializer(user)
             return Response({
                 'access_token': access_token,
                 'refresh_token': str(refresh),
-                'message': 'Login successful'
+                'message': 'Login successful',
+                'username': user_serializer.data['username'],
             })
         else:
             return Response({'error': 'Invalid credentials'})
