@@ -3,8 +3,9 @@ import { Fragment } from 'react'
 import defaultpfp from '../assets/Images/defaultpfp.avif'
 import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie';
-const ProfileDropdown = (user) => {
+const ProfileDropdown = () => {
     const navigate = useNavigate();
+    const userid = localStorage.getItem('user')
     const handleLogout = async () => {
         try {
             const response = await fetch(
@@ -76,7 +77,7 @@ const ProfileDropdown = (user) => {
                         <div className="px-1 py-1 ">
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/${user}`}
+                                    <Link to={`/${userid}`}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
@@ -86,21 +87,11 @@ const ProfileDropdown = (user) => {
                             </Menu.Item>
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/editprofile`}
+                                    <Link to={`/${userid}/edit`}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
                                         Edit Profile
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link to={`/userdashboard/#myblogs`}
-                                        className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
-                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                    >
-                                        My Blogs
                                     </Link>
                                 )}
                             </Menu.Item>
