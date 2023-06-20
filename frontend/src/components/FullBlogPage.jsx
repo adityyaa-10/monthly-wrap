@@ -82,7 +82,7 @@ const FullBlogPage = () => {
                     Go Back
                 </button>
                 <img src={reactbg} alt="Blog" className="mb-4 rounded-lg" />
-                <h1 className="text-3xl font-bold mb-4">{title}</h1>
+                <h1 className="text-3xl font-bold mb-4">{title.toUpperCase()}</h1>
                 <h2 className="text-xl font-medium mb-4">Category: {category}</h2>
                 <h3 className="text-lg mb-4">Author: {author}</h3>
                 <p className="text-base leading-7 mb-8" dangerouslySetInnerHTML={{ __html: fullBlogContent }}></p>

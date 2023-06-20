@@ -23,7 +23,7 @@ const ProfileDropdown = () => {
             );
 
             if (response.ok) {
-                navigate('/');
+                navigate('/login');
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(

@@ -123,11 +123,6 @@ const UserProfile = () => {
                                         />
                                     </a>
                                 </div>
-                                <Link to={`/editprofile`}>
-                                    <button className="bg-blue px-3 mr-2 rounded-md py-2 text-base text-white border border-blue mt-2">
-                                        Edit Profile
-                                    </button>
-                                </Link>
                             </>
                         )}
                     </div>

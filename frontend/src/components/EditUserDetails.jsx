@@ -1,10 +1,21 @@
+/* eslint-disable no-unused-vars */
 import defaultpfp from '../assets/Images/defaultpfp.avif'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useParams } from 'react-router-dom'
 const EditUserDetails = () => {
     const { user } = useParams();
     const [profilePicture, setProfilePicture] = useState(null);
+
+    const [initialData, setInitialData] = useState({
+        user: '',
+        twitter_link: '',
+        github_link: '',
+        linkedin_link: '',
+        about: '',
+        techstack: '',
+        other_interests: ''
+    });
 
     const [formData, setFormData] = useState({
         user: '',
@@ -15,7 +26,6 @@ const EditUserDetails = () => {
         techstack: '',
         other_interests: ''
     });
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormData((prevData) => ({
@@ -32,6 +42,40 @@ const EditUserDetails = () => {
             profile_picture: file,
         }));
     };
+    useEffect(() => {
+        // Fetch initial user data here
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(
+                    `http://127.0.0.1:8000/api/users/profiles/${user}/`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${Cookies.get('new_access_token')}`,
+                        },
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setInitialData(data);
+                    setFormData(data);
+                } else if (response.status === 401) {
+                    // Handle refresh token logic here
+                    // ...
+                } else {
+                    // Handle other error responses
+                    // ...
+                }
+            } catch (error) {
+                // Handle the error if needed
+                // ...
+            }
+        };
+
+        fetchUserData();
+    }, [user]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -87,8 +131,6 @@ const EditUserDetails = () => {
             // Handle the error if needed
         }
     };
-
-
     return (
         <section className=" body-font relative max-w-screen-lg mx-auto container px-5 py-11 text-white">
             <h2 className="mb-4 text-4xl font-bold dark:text-white -ml-1">Edit <span className='text-blue'> Profile </span></h2>
@@ -101,7 +143,7 @@ const EditUserDetails = () => {
                         {profilePicture ? (
                             <img
                                 className="w-20 h-20 lg:w-32 lg:h-32 rounded-full mb-5"
-                                src={URL.createObjectURL(profilePicture)}
+                                src={JSON.stringify(URL.createObjectURL(profilePicture))}
                                 alt="Rounded avatar"
                             />
                         ) : (
@@ -134,7 +176,7 @@ const EditUserDetails = () => {
                                 className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
                                 placeholder="https://twitter.com/username"
                                 onChange={handleInputChange}
-                            />
+                                value={formData.twitter_link} />
                         </div>
                         <div className="mb-6 w-full md:w-1/2 p-2">
                             <label htmlFor="github_link" className="block mb-2 text-base font-semibold">GitHub URL</label>
@@ -144,6 +186,7 @@ const EditUserDetails = () => {
                                 className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
                                 placeholder="https://github.com/username"
                                 onChange={handleInputChange}
+                                value={formData.github_link}
                             />
                         </div>
                         <div className="mb-6 w-full md:w-1/2 p-2">
@@ -154,43 +197,47 @@ const EditUserDetails = () => {
                                 className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700 "
                                 placeholder="https://www.linkedin.com/in/username/"
                                 onChange={handleInputChange}
+                                value={formData.linkedin_link}
                             />
                         </div>
                         <div className="mb-6 w-full p-2">
                             <label htmlFor="about" className="block mb-2 text-base font-semibold">About</label>
-                            <textarea
+                            <input
                                 name='about'
                                 id="about"
                                 rows="4"
                                 className="block p-2.5 w-full text-sm text-primary bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Tell us something about yourself..."
                                 onChange={handleInputChange}
+                                value={formData.about}
                             >
-                            </textarea>
+                            </input>
                         </div>
                         <div className="mb-6 w-full p-2">
                             <label htmlFor="techstack" className="block mb-2 text-base font-semibold">Tech Stack</label>
-                            <textarea
+                            <input
                                 name='techstack'
                                 id="techstack"
                                 rows="4"
                                 className="block p-2.5 w-full text-sm text-primary bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Add your tech stack here!"
                                 onChange={handleInputChange}
+                                value={formData.techstack}
                             >
-                            </textarea>
+                            </input>
                         </div>
                         <div className="mb-6 w-full p-2">
                             <label htmlFor="other_interests" className="block mb-2 text-base font-semibold">Other Interests</label>
-                            <textarea
+                            <input
                                 name='other_interests'
                                 id="other_interests"
                                 rows="4"
                                 className="block p-2.5 w-full text-sm text-primary bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Tell us about your interests apart from tech"
                                 onChange={handleInputChange}
+                                value={formData.other_interests}
                             >
-                            </textarea>
+                            </input>
                         </div>
                     </div>
                 </div>
