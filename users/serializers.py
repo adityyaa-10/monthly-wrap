@@ -11,10 +11,10 @@ from .models import Profile
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(read_only=True, slug_field='username')
-    profile_picture = serializers.ImageField(required = False)
+    # profile_picture = serializers.ImageField(required = False)
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['user','name','about','techstack','other_interests','email','phone_no','github_link','twitter_link','linkedin_link',]
 
 
 class RegisterSerializer(serializers.ModelSerializer):
