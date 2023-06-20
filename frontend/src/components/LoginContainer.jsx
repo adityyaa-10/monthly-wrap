@@ -65,7 +65,8 @@ const LoginContainer = () => {
                     console.log(data.refresh_token)
                     const new_access_token = data.access_token;
                     const new_refresh_token = data.refresh_token;
-
+                    const userid = data.username
+                    localStorage.setItem('user', userid)
                     Cookies.set('new_access_token', new_access_token, { secure: true, sameSite: 'strict' });
                     Cookies.set('new_refresh_token', new_refresh_token, { secure: true, sameSite: 'strict' });
 

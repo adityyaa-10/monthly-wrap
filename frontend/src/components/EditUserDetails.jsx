@@ -1,9 +1,11 @@
 import defaultpfp from '../assets/Images/defaultpfp.avif'
 import { useState } from 'react';
 import Cookies from 'js-cookie';
+import { useParams } from 'react-router-dom'
 const EditUserDetails = () => {
+    const { user } = useParams();
     const [profilePicture, setProfilePicture] = useState(null);
-    
+
     const [formData, setFormData] = useState({
         user: '',
         twitter_link: '',
@@ -36,7 +38,7 @@ const EditUserDetails = () => {
 
         try {
             const response = await fetch(
-                `http://127.0.0.1:8000/api/users/profiles/${formData.user}/`,
+                `http://127.0.0.1:8000/api/users/profiles/${user}/`,
                 {
                     method: 'PUT',
                     body: JSON.stringify(formData),
@@ -119,8 +121,8 @@ const EditUserDetails = () => {
                                 id="user"
                                 className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-slate-700"
                                 placeholder="Username"
-                                value={formData.user}
-                                onChange={handleInputChange}
+                                value={user}
+                                disabled
                             />
                         </div>
                         <div className="mb-6 w-full md:w-1/2 p-2">
@@ -160,7 +162,7 @@ const EditUserDetails = () => {
                                 name='about'
                                 id="about"
                                 rows="4"
-                                className="block p-2.5 w-full text-sm  bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                className="block p-2.5 w-full text-sm text-primary bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Tell us something about yourself..."
                                 onChange={handleInputChange}
                             >
@@ -172,7 +174,7 @@ const EditUserDetails = () => {
                                 name='techstack'
                                 id="techstack"
                                 rows="4"
-                                className="block p-2.5 w-full text-sm  bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                className="block p-2.5 w-full text-sm text-primary bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Add your tech stack here!"
                                 onChange={handleInputChange}
                             >
@@ -184,7 +186,7 @@ const EditUserDetails = () => {
                                 name='other_interests'
                                 id="other_interests"
                                 rows="4"
-                                className="block p-2.5 w-full text-sm  bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                className="block p-2.5 w-full text-sm text-primary bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Tell us about your interests apart from tech"
                                 onChange={handleInputChange}
                             >
