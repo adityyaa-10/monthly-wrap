@@ -4,13 +4,14 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+from datetime import date
 
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     content = RichTextField()
-    date_posted = models.DateTimeField(default=timezone.now)
+    date_posted = models.DateField(default=date.today)
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     likes_count = models.IntegerField(default = 0)
     category = models.CharField(max_length=255, default='All')
