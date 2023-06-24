@@ -19,7 +19,7 @@ const ContactDetails = () => {
                                             </Player>
                                         </div>
                                         <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
-                                            <h2 className="font-medium title-font text-blue mb-1 text-xl">Shooting Stars</h2>
+                                            <h2 className="font-medium  text-blue mb-1 text-xl">Shooting Stars</h2>
                                             <p className="leading-relaxed">VHS cornhole pop-up, try-hard 8-bit iceland helvetica. Kinfolk bespoke try-hard cliche palo santo offal.</p>
                                         </div>
                                     </div>
@@ -36,7 +36,7 @@ const ContactDetails = () => {
                                             </Player>
                                         </div>
                                         <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
-                                            <h2 className="font-medium title-font text-blue mb-1 text-xl">The Catalyzer</h2>
+                                            <h2 className="font-medium  text-blue mb-1 text-xl">The Catalyzer</h2>
                                             <p className="leading-relaxed">VHS cornhole pop-up, try-hard 8-bit iceland helvetica. Kinfolk bespoke try-hard cliche palo santo offal.</p>
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@ const ContactDetails = () => {
                                             </Player>
                                         </div>
                                         <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
-                                            <h2 className="font-medium title-font text-blue mb-1 text-xl">The 400 Blows</h2>
+                                            <h2 className="font-medium  text-blue mb-1 text-xl">The 400 Blows</h2>
                                             <p className="leading-relaxed">VHS cornhole pop-up, try-hard 8-bit iceland helvetica. Kinfolk bespoke try-hard cliche palo santo offal.</p>
                                         </div>
                                     </div>

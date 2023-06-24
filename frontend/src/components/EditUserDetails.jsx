@@ -2,11 +2,11 @@
 import defaultpfp from '../assets/Images/defaultpfp.avif'
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 const EditUserDetails = () => {
     const { user } = useParams();
     const [profilePicture, setProfilePicture] = useState(null);
-
+    const navigate = useNavigate()
     const [initialData, setInitialData] = useState({
         user: '',
         twitter_link: '',
@@ -62,8 +62,27 @@ const EditUserDetails = () => {
                     setInitialData(data);
                     setFormData(data);
                 } else if (response.status === 401) {
-                    // Handle refresh token logic here
-                    // ...
+                    const new_refresh_token = Cookies.get('new_refresh_token')
+                    const refreshResponse = await fetch(
+                        'http://127.0.0.1:8000/api/users/token/refresh/',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ refresh: new_refresh_token }),
+                            credentials: 'include', // Include cookies in the request
+                        });
+
+                    if (refreshResponse.ok) {
+                        const data = await refreshResponse.json();
+                        const newAccessToken = data.access_token;
+                        Cookies.set('new_access_token', newAccessToken);
+                        fetchUserData() // Retry the form submission with the new access token
+                    } else {
+                        // Refresh token failed or expired, handle error
+                        // ...
+                    }
                 } else {
                     // Handle other error responses
                     // ...
@@ -95,8 +114,8 @@ const EditUserDetails = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
-                // Reset the form fields or display a success message
+                navigate(`/${user}`)
+                console.log(data)
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(
