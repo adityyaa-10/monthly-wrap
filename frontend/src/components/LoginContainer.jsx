@@ -27,7 +27,6 @@ const LoginContainer = () => {
             if (refreshResponse.ok) {
                 const data = await refreshResponse.json();
                 const newAccessToken = data.access;
-
                 return newAccessToken;
             } else {
                 throw new Error('Token refresh failed');
