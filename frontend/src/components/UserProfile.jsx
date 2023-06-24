@@ -77,10 +77,12 @@ const UserProfile = () => {
                         <div className="h-1 mt-2 w-20 lg:w-32 bg-blue rounded"></div>
                         {profileData && (
                             <>
-                                <h1 className="sm:text-3xl mt-3 text-2xl font-medium title-font mb-2 text-white">
-                                    {profileData.name.toUpperCase()}
+                                <h1 className="sm:text-3xl mt-3 text-2xl font-semibold mb-2">
+                                    <span className='text-white'>{profileData.name.split(' ')[0]}</span>{' '}
+                                    <span className='text-blue'>{profileData.name.split(' ')[1]}</span>{' '}
+                                    {profileData.name.split(' ').slice(2).join(' ')}
                                 </h1>
-                                <p className="w-2/3 leading-relaxed text-gray-500">
+                                <p className="w-2/3 leading-relaxed font-bold text-gray-500">
                                     {profileData.user.toLowerCase()}
                                 </p>
                             </>
@@ -88,15 +90,15 @@ const UserProfile = () => {
                     </div>
 
                     <div className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-                        <h1 className="sm:text-3xl mt-3 text-2xl font-semibold title-font mb-2 text-white">
-                            Contact Details
+                        <h1 className="sm:text-3xl mt-3 text-2xl font-semibold mb-2 text-white">
+                            Contact <span className='text-blue'> Details</span>
                         </h1>
                         {/* Render contact details when profileData is available */}
                         {profileData && (
                             <>
-                                <h1 className=" mt-3 text-base font-semibold title-font mb-2 text-white">
+                                <h1 className=" mt-3 text-base font-semibold mb-2 text-white">
                                     E-mail {' : '}
-                                    <span className="w-2/3 leading-relaxed text-gray-500">
+                                    <span className="w-2/3 leading-relaxed font-bold text-gray-500">
                                         {profileData.email}
                                     </span>
                                 </h1>
@@ -135,7 +137,6 @@ const UserProfile = () => {
                                 <p>{profileData.about}</p>
                             ) : (
                                 <Link
-                                    to={`/editprofile`}
                                     className="relative items-center justify-start inline-block px-3 py-1 overflow-hidden font-bold rounded-full group"
                                 >
                                     <span className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[15%]"></span>
@@ -155,7 +156,6 @@ const UserProfile = () => {
                                 <p>{profileData.techstack}</p>
                             ) : (
                                 <Link
-                                    to={`/editprofile`}
                                     className="relative items-center justify-start inline-block px-3 py-1 overflow-hidden font-bold rounded-full group"
                                 >
                                     <span className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[15%]"></span>
@@ -175,7 +175,6 @@ const UserProfile = () => {
                                 <p>{profileData.other_interests}</p>
                             ) : (
                                 <Link
-                                    to={`/editprofile`}
                                     className="relative items-center justify-start inline-block px-3 py-1 overflow-hidden font-bold rounded-full group"
                                 >
                                     <span className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[15%]"></span>

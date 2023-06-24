@@ -2,13 +2,14 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import defaultblogpic from '../assets/Images/selectcover.png'
 import JoditEditor from "jodit-react";
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom'
 const BlogCreate = () => {
     const [logs, setLogs] = useState([]);
     const [coverImage, setCoverImage] = useState(null);
     const [content, setContent] = useState('')
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
-
+    const navigate = useNavigate();
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setCoverImage(file);
@@ -70,6 +71,7 @@ const BlogCreate = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Blog created successfully', data);
+                navigate('/home')
                 // Do something with the response data if needed
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')

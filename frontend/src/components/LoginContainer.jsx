@@ -118,7 +118,7 @@ const LoginContainer = () => {
     };
     return (
         <div>
-            <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
+            <h2 className="text-gray-900 text-lg font-medium  mb-5">
                 Log In to your account
             </h2>
             <Formik

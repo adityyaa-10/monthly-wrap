@@ -102,7 +102,7 @@ const BlogList = () => {
                 <div className='flex flex-wrap mx-auto'>
                     {filteredBlogs.length > 0 ? (
                         filteredBlogs.map((blog) => (
-                            <section key={blog.id} className='w-full md:w-1/2 xl:w-1/3'>
+                            <section key={blog.id} className='w-full md:w-2/3 mx-auto'>
                                 <div className="p-4">
                                     <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
                                         <img

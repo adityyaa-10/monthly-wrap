@@ -1,6 +1,6 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 const SignupSchema = Yup.object().shape({
@@ -20,7 +20,7 @@ const SignupSchema = Yup.object().shape({
 
 const SignupContainer = () => {
     const [responseMessage, setResponseMessage] = useState('');
-
+    const navigate = useNavigate();
     const handleSignup = (values, { setSubmitting }) => {
         // Convert the form values to JSON
         const data = JSON.stringify(values);
@@ -40,14 +40,10 @@ const SignupContainer = () => {
                     // Extract the access token from the response
                     const accessToken = data.tokens.access;
                     const refreshToken = data.tokens.refresh;
-
-                    // Store the tokens securely on the client-side (e.g., in secure HTTP-only cookies or local storage)
-                    // You can use a library like js-cookie or implement the storage mechanism yourself
-                    // Example using js-cookie:
+                    navigate('/login')
                     Cookies.set('accessToken', accessToken, { secure: true, sameSite: 'strict' });
                     Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'strict' });
 
-                    // Set the response message in the state
                     setResponseMessage(data.message);
                 } else {
                     // Set an error message in the state if the response is not as expected
@@ -65,7 +61,7 @@ const SignupContainer = () => {
     };
     return (
         <div>
-            <h2 className="text-gray-900 text-lg font-medium title-font mb-5">Sign Up</h2>
+            <h2 className="text-gray-900 text-lg font-medium  mb-5">Sign Up</h2>
             <Formik
                 initialValues={{
                     first_name: '',

@@ -24,6 +24,8 @@ const ProfileDropdown = () => {
 
             if (response.ok) {
                 navigate('/login');
+                Cookies.remove('new_access_token')
+                Cookies.remove('new_refresh_token')
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(
