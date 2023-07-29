@@ -14,7 +14,7 @@ class BlogListAPIView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def get(self, request, *args, **kwargs):
-        posts = BlogPost.objects.all()
+        posts = BlogPost.objects.filter(is_published=True)
         serializer = BlogPostSerializer(posts, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
         
