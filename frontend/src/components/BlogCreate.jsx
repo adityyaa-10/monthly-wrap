@@ -72,7 +72,6 @@ const BlogCreate = () => {
                 const data = await response.json();
                 console.log('Blog created successfully', data);
                 navigate('/home')
-                // Do something with the response data if needed
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(
@@ -83,28 +82,21 @@ const BlogCreate = () => {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ refresh: new_refresh_token }),
-                        credentials: 'include', // Include cookies in the request
+                        credentials: 'include',
                     });
 
                 if (refreshResponse.ok) {
                     const data = await refreshResponse.json();
                     const newAccessToken = data.access_token;
                     Cookies.set('new_access_token', newAccessToken);
-                    handleSubmit(e); // Retry the form submission with the new access token
-                } else {
-                    // Refresh token failed or expired, handle error
-                    // ...
+                    handleSubmit(e);
                 }
             } else {
-                // Handle other error responses
-                // Example:
                 const errorData = await response.json();
                 console.error('Error creating blog', errorData);
-                // Handle the error if needed
             }
         } catch (error) {
             console.error('Error creating blog', error);
-            // Handle the error if needed
         }
     };
 
@@ -150,17 +142,6 @@ const BlogCreate = () => {
                                 </div>
                             </div>
                             <div className="p-2 w-full">
-                                {/* <div className="relative">
-                                    <input
-                                        type="text"
-                                        placeholder='Category of Blog'
-                                        id="category"
-                                        name="category"
-                                        value={category}
-                                        onChange={(e) => setCategory(e.target.value)}
-                                        className="w-full bg-gray-200 rounded border text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                    />
-                                </div> */}
                                 <div className="relative">
                                     <select
                                         id="category"
