@@ -150,7 +150,7 @@ const BlogCreate = () => {
                                 </div>
                             </div>
                             <div className="p-2 w-full">
-                                <div className="relative">
+                                {/* <div className="relative">
                                     <input
                                         type="text"
                                         placeholder='Category of Blog'
@@ -159,7 +159,23 @@ const BlogCreate = () => {
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
                                         className="w-full bg-gray-200 rounded border text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                    />                                </div>
+                                    />
+                                </div> */}
+                                <div className="relative">
+                                    <select
+                                        id="category"
+                                        name="category"
+                                        value={category}
+                                        onChange={(e) => setCategory(Array.from(e.target.selectedOptions, option => option.value))}
+                                        className="w-1/3 bg-gray-200 rounded border text-base outline-none text-gray-700 py-2 px-3 leading-8 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        <option value="" disabled className="text-gray-500">Select a category</option>
+                                        <option value="category1" className="text-lg m-2 bg-white p-2">Category 1</option>
+                                        <option value="category2" className="text-lg m-2 bg-white p-2">Category 2</option>
+                                        <option value="category3" className="text-lg m-2 bg-white p-2">Category 3</option>
+                                        <option value="category4" className="text-lg m-2 bg-white p-2">Category 4</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="p-2 w-full">
                                 <div className="relative text-primary">
