@@ -17,6 +17,7 @@ import App from './App';
 import Home from './pages/Home';
 import ResetPassword from './pages/ResetPassword';
 import FullBlogPage from './components/FullBlogPage';
+import ForgotPassword from './pages/ForgotPassword';
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
   {
     path: "/home/:title",
     element: <FullBlogPage />
+  },
+  {
+    path: "/forgotpassword",
+    element: <ForgotPassword />
   }
 ]);
 
