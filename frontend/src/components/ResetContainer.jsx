@@ -74,7 +74,7 @@ const ResetContainer = () => {
                             disabled={isSubmitting}
                             className="hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2"
                         >
-                            Log In
+                            Send Reset Link
                         </button>
                     </Form>
                 )}

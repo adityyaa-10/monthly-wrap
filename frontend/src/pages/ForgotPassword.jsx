@@ -18,9 +18,6 @@ const ForgotPassword = () => {
                     <h1 className="sm:text-3xl md:text-5xl text-2xl font-normal text-center text-white mb-11">Forgot Password ? Reset <span className='font-semibold text-blue'> it now !</span></h1>
                 </div>
                 <div className="container mx-auto flex flex-wrap items-center justify-center">
-                    <div className="lg:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-5 md:mt-0 ">
-                        <ResetContainer />
-                    </div>
                     <div className="lg:w-1/2 hidden lg:block md:pl-16 lg:pl-0 pl-0 ">
                         <Player
                             autoplay
@@ -29,6 +26,9 @@ const ForgotPassword = () => {
                             style={{ height: '550px', width: '550px' }}
                         >
                         </Player>
+                    </div>
+                    <div className="lg:w-[40%] bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-5 md:mt-0 ">
+                        <ResetContainer />
                     </div>
                 </div>
 
