@@ -1,6 +1,6 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-
+import { useParams } from 'react-router-dom';
 
 const ResetSchema = Yup.object().shape({
     password: Yup.string()
@@ -12,6 +12,29 @@ const ResetSchema = Yup.object().shape({
 
 
 const ResetPassword = () => {
+    const { userId, token } = useParams();
+
+    const handleFormSubmit = async (values, { setSubmitting }) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/users/reset-password/${userId}/${token}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newPassword: values.password })
+            });
+
+            if (response.ok) {
+                console.log('Password reset successful');
+            } else {
+                console.error('Password reset failed');
+            }
+        } catch (error) {
+            console.error('Error resetting password:', error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
     return (
         <div className='h-[100vh] w-[100vw] flex items-center'>
             <div className='max-w-[400px] bg-gray-100 rounded-lg p-8 flex flex-col mx-auto '>
@@ -22,6 +45,7 @@ const ResetPassword = () => {
                         password2: '',
                     }}
                     validationSchema={ResetSchema}
+                    onSubmit={handleFormSubmit}
                 >
                     {({ errors, touched }) => (
                         <Form>
