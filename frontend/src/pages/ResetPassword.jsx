@@ -12,16 +12,19 @@ const ResetSchema = Yup.object().shape({
 
 
 const ResetPassword = () => {
-    const { userId, token } = useParams();
-
+    const { uid, token } = useParams();
     const handleFormSubmit = async (values, { setSubmitting }) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/users/reset-password/${userId}/${token}/`, {
+            const payload = {
+                password: values.password,
+                password2: values.password2
+            };
+            const response = await fetch(`http://localhost:8000/api/users/reset-password/${uid}/${token}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ newPassword: values.password })
+                body: JSON.stringify(payload)
             });
 
             if (response.ok) {

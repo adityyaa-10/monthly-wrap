@@ -177,7 +177,7 @@ const LoginContainer = () => {
                         </div>
                         <div className="relative mb-4">
                             <Link
-                                to={`/resetpassword`}
+                                to={`/forgotpassword`}
                                 className="leading-7 text-sm font-semibold text-blue"
                             >
                                 Forgot Password?
