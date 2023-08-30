@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import defaultblogpic from '../assets/Images/selectcover.png'
 import JoditEditor from "jodit-react";
 import Cookies from 'js-cookie';
-// import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const BlogCreate = () => {
@@ -17,7 +16,6 @@ const BlogCreate = () => {
         setTitle('');
         setCategory('');
     };
-    // const navigate = useNavigate();
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setCoverImage(file);
