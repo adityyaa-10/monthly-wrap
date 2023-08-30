@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { Player } from '@lottiefiles/react-lottie-player';
@@ -60,7 +61,7 @@ const BlogList = () => {
 
     useEffect(() => {
         fetchBlogs();
-    },);
+    }, []);
 
     const filteredBlogs = blogs.filter((blog) =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -102,7 +103,7 @@ const BlogList = () => {
                 <div className='flex flex-wrap mx-auto'>
                     {filteredBlogs.length > 0 ? (
                         filteredBlogs.map((blog) => (
-                            <section key={blog.id} className='w-full md:w-2/3 mx-auto'>
+                            <section key={blog.id} className='w-full md:w-1/3 mx-auto'>
                                 <div className="p-4">
                                     <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
                                         <img

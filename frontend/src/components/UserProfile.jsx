@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import defaultpfp from '../assets/Images/defaultpfp.avif';
@@ -62,7 +63,7 @@ const UserProfile = () => {
 
     useEffect(() => {
         fetchProfileData();
-    },);
+    }, []);
 
     return (
         <section className="text-white body-font max-w-screen-xl mx-auto">

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { Player } from '@lottiefiles/react-lottie-player';
@@ -62,7 +63,7 @@ const UserAllBlogs = () => {
 
     useEffect(() => {
         fetchBlogs();
-    },);
+    }, []);
 
     const filteredBlogs = blogs.filter((blog) =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase())

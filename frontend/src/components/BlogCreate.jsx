@@ -2,14 +2,22 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import defaultblogpic from '../assets/Images/selectcover.png'
 import JoditEditor from "jodit-react";
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const BlogCreate = () => {
     const [logs, setLogs] = useState([]);
     const [coverImage, setCoverImage] = useState(null);
     const [content, setContent] = useState('')
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
-    const navigate = useNavigate();
+    const clearFormFields = () => {
+        setCoverImage(null);
+        setContent('');
+        setTitle('');
+        setCategory('');
+    };
+    // const navigate = useNavigate();
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setCoverImage(file);
@@ -71,7 +79,11 @@ const BlogCreate = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Blog created successfully', data);
-                navigate('/home')
+                toast.success('Blog sent for review!', {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+                clearFormFields();
+                // navigate('/home');
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(
@@ -94,6 +106,9 @@ const BlogCreate = () => {
             } else {
                 const errorData = await response.json();
                 console.error('Error creating blog', errorData);
+                toast.error('Error creating blog. Please try again.', {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
             }
         } catch (error) {
             console.error('Error creating blog', error);
@@ -103,6 +118,7 @@ const BlogCreate = () => {
 
     return (
         <div>
+            <ToastContainer />
             <section className="body-font relative max-w-screen-lg mx-auto">
                 <div className="container px-5 py-24 mx-auto">
                     <div className="flex flex-col w-full mb-3">
