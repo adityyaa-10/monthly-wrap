@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import reactbg from '../assets/Images/react.png';
+// import reactbg from '../assets/Images/react.png';
 import Cookies from 'js-cookie';
 import { ArrowLeft } from 'feather-icons-react';
 import Sidebar from './Sidebar';
@@ -10,6 +10,7 @@ const FullBlogPage = () => {
     const [author, setAuthor] = useState('');
     const [fullBlogContent, setFullBlogContent] = useState('');
     const [newContent, setNewContent] = useState('');
+    const [cover, setCover] = useState('');
     const [likes, setLikes] = useState(0);
     const [comments, setComments] = useState([]);
 
@@ -37,6 +38,7 @@ const FullBlogPage = () => {
                     setFullBlogContent(data.content);
                     setLikes(data.likes_count);
                     setComments(data.comments);
+                    setCover(data.cover_image)
                 }
             } catch (error) {
                 console.error(error);
@@ -149,8 +151,9 @@ const FullBlogPage = () => {
                             >
                                 <ArrowLeft className="mr-2" /> Go Back
                             </button>
-
-                            <img src={reactbg} alt="Blog" className="mb-4 rounded-lg w-full" />
+                            <div className='w-1/2 h-1/2 mx-auto'>
+                                <img src={`http://127.0.0.1:8000${cover}`} alt="Blog" className="mb-4 rounded-lg w-full" />
+                            </div>
                             <h1 className="text-3xl text-white font-bold mb-4">{title.toUpperCase().replace(/-/g, ' ')}</h1>
                             <h3 className="text-lg text-white mb-4">Published by <span className='text-blue font-semibold'>{author}</span></h3>
                             <p className="text-base leading-7 mb-8 text-white" dangerouslySetInnerHTML={{ __html: fullBlogContent }}></p>
