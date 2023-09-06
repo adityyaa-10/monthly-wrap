@@ -6,6 +6,7 @@ from rest_framework import permissions
 from .serializers import *
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
@@ -26,6 +27,14 @@ class BlogCreateAPIView(APIView):
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
+            # Handling Cover image
+            cover_image = request.FILES.get('cover_image')
+            if cover_image:
+                blog = serializer.save(user=request.user, cover_image=cover_image)
+            else:
+                blog = serializer.save(user=request.user)
+            
+            # Handling Other images
             blog = serializer.save(user=request.user)
             images = request.FILES.getlist('images')
             for image in images:
@@ -38,6 +47,7 @@ class BlogCreateAPIView(APIView):
 class BlogDetailAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get_object(self, slug):
         try:
@@ -46,10 +56,12 @@ class BlogDetailAPIView(APIView):
             return None
 
     def get(self, request, slug, *args, **kwargs):
+
         post = self.get_object(slug)
         if post is None:
             return Response({'error': 'Post not found'}, status = status.HTTP_404_NOT_FOUND)
         serializer = BlogPostSerializer(post)
+        
         return Response(serializer.data, status = status.HTTP_200_OK)
 
     def put(self, request, slug, *args, **kwargs):
@@ -186,5 +198,6 @@ class ContactAPIView(APIView):
         data["user"] = request.user.username
         serializer = ContactSerializer(data=data)
         if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -15,7 +15,7 @@ class BlogPost(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     likes_count = models.IntegerField(default = 0)
     category = models.CharField(max_length=255, default='All')
-    cover_image = models.ImageField(upload_to='blog_images/',default='blog_images/default.jpg')
+    cover_image = models.ImageField(upload_to='blog_images/')
     is_published = models.BooleanField(default=False)
     
 
@@ -29,7 +29,7 @@ class BlogPost(models.Model):
 
 class Image(models.Model):
     blog = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='blog_images/',default='blog_images/default.jpg')
+    image = models.ImageField(upload_to='blog_images/')
 
 
 
