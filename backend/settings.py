@@ -224,3 +224,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 PASSWORD_RESET_TIMEOUT = 600
+
+STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+SITE_ID = 1
