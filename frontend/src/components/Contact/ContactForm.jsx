@@ -5,8 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ContactForm = () => {
     const [submissionError, setSubmissionError] = useState('');
-    const [subject, setSubject] = useState('');
-    const [message, setMessage] = useState('');
+
     const refreshAccessToken = async () => {
         try {
             const refreshToken = Cookies.get('new_refresh_token');
@@ -52,7 +51,6 @@ const ContactForm = () => {
             if (!response.ok) {
                 if (response.status === 401) {
                     await refreshAccessToken();
-                    // Retry the request with the new access token
                     const newAccessToken = Cookies.get('new_access_token');
                     const retryResponse = await fetch('http://127.0.0.1:8000/query/contactus/', {
                         method: 'POST',
@@ -76,8 +74,6 @@ const ContactForm = () => {
                 toast.success('Message sent!', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                setSubject('');
-                setMessage('');
                 console.log('Form submitted successfully!');
             }
         } catch (error) {
@@ -102,8 +98,6 @@ const ContactForm = () => {
                                 id="subject"
                                 className="text-primary block p-3 w-full text-sm rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 "
                                 placeholder="Let us know how we can help you"
-                                value={subject}
-                                onChange={(e) => setSubject(e.target.value)}
                             />
                         </div>
                         <div className="relative mb-4">
@@ -113,8 +107,6 @@ const ContactForm = () => {
                                 rows="6"
                                 className=" text-primary block p-2.5 w-full text-sm rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
                                 placeholder="Leave a comment..."
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
                             ></textarea>
                         </div>
                         <div className="text-red-600 text-md font-semibold">{submissionError}</div>
