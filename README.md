@@ -11,6 +11,12 @@ The Monthly Wrap is a comprehensive blogging platform, encompassing both front-e
 
 **Monthly Wrap** is an open-source project. We are excited to welcome contributors from the open-source community to help us improve and grow!
 
+## Prerequisites
+
+- Python and pip installed (for Django)
+- Node.js and npm installed (for React)
+- Git Bash (for running bash commands)
+
 ## 🌟 Why Contribute?
 
 - **Hacktoberfest Accepted:** Our repository is officially recognized as part of Hacktoberfest, making your contributions count toward the annual event.
@@ -19,6 +25,8 @@ The Monthly Wrap is a comprehensive blogging platform, encompassing both front-e
 - **Make a Difference:** Your contributions will help us enhance and expand the project for the benefit of users worldwide.
 
 ## 📌 How to Contribute
+
+**Please make sure to follow our [Contribution Guidelines](CONTRIBUTION.md) when contributing to this project.**
 
 ### **Check Our Issues**: Visit our [Issues Page](https://github.com/adityyaa-10/monthly-wrap/issues) to explore the list of open issues.
 
@@ -75,7 +83,11 @@ source [name of  the  virtual  env]/bin/activate
 pip  install  -r  requirements.txt
 ```
 
-8. Run migrations
+8. Set up database
+
+```bash
+python  manage.py  makemigrations
+```
 
 ```bash
 python  manage.py  migrate
@@ -119,3 +131,4 @@ To run the project in your localhost server, follow these steps.
 
 6. Open [localhost](https://localhost:5173) in any browser of your choice and you are good to go.
 
+**Happy contributing! 🚀**
