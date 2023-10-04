@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faComment } from '@fortawesome/free-solid-svg-icons'
 // import reactbg from '../assets/Images/react.png';
 import Cookies from 'js-cookie';
 import { ArrowLeft } from 'feather-icons-react';
@@ -123,6 +126,7 @@ const FullBlogPage = () => {
                 throw new Error('Failed to add comment');
             } else {
                 const data = await response.json();
+
                 setComments([...comments, data]);
                 setNewContent(''); // Clear the comment input
             }
@@ -134,6 +138,8 @@ const FullBlogPage = () => {
     const goBack = () => {
         navigate(-1);
     };
+
+    console.log(comments[0].date_posted)
 
     return (
         <div>
@@ -151,17 +157,19 @@ const FullBlogPage = () => {
                             >
                                 <ArrowLeft className="mr-2" /> Go Back
                             </button>
-                            <div className='w-1/2 h-1/2 mx-auto'>
-                                <img src={`http://127.0.0.1:8000/${cover}`} alt="Blog" className="mb-4 rounded-lg w-full" />
+                            <h1 className="text-3xl text-center text-white font-bold my-6">{title.toUpperCase().replace(/-/g, ' ')}</h1>
+                            <div className='w-full'>
+                                <img src={`http://127.0.0.1:8000/${cover}`} alt="Blog" className="mb-4 h-[30rem] rounded-lg w-full" />
                             </div>
-                            <h1 className="text-3xl text-white font-bold mb-4">{title.toUpperCase().replace(/-/g, ' ')}</h1>
-                            <h3 className="text-lg text-white mb-4">Published by <span className='text-blue font-semibold'>{author}</span></h3>
+                            
+                            <h3 className="text-lg text-white mb-4">Published by <span className='text-blue font-semibold'>@{author}</span></h3>
                             <p className="text-base leading-7 mb-8 text-white" dangerouslySetInnerHTML={{ __html: fullBlogContent }}></p>
                             <div className="flex flex-col mb-7">
                                 <button
                                     onClick={handleLike}
-                                    className="bg-blue text-white font-semibold py-2 px-4 rounded mb-5 w-28"
+                                    className="bg-blue text-white font-semibold py-2 px-4 rounded mb-5 w-32"
                                 >
+                                    <FontAwesomeIcon className='pr-2' icon={faThumbsUp}></FontAwesomeIcon>
                                     Like ({likes})
                                 </button>
                                 <div className="space-y-2">
@@ -186,6 +194,7 @@ const FullBlogPage = () => {
                                         onClick={handleComment}
                                         className="bg-blue text-white font-semibold py-2 px-3 rounded"
                                     >
+                                        <FontAwesomeIcon className='pr-2' icon={faComment}></FontAwesomeIcon>
                                         Add Comment
                                     </button>
                                 </div>
