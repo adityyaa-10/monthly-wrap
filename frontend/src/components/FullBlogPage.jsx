@@ -152,7 +152,7 @@ const FullBlogPage = () => {
                                 <ArrowLeft className="mr-2" /> Go Back
                             </button>
                             <div className='w-1/2 h-1/2 mx-auto'>
-                                <img src={`http://127.0.0.1:8000${cover}`} alt="Blog" className="mb-4 rounded-lg w-full" />
+                                <img src={`http://127.0.0.1:8000/${cover}`} alt="Blog" className="mb-4 rounded-lg w-full" />
                             </div>
                             <h1 className="text-3xl text-white font-bold mb-4">{title.toUpperCase().replace(/-/g, ' ')}</h1>
                             <h3 className="text-lg text-white mb-4">Published by <span className='text-blue font-semibold'>{author}</span></h3>

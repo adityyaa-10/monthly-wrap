@@ -101,7 +101,7 @@ const BlogList = () => {
                         />
                     </div>
                 </div>
-                <div className='flex flex-wrap mx-auto'>
+                <div className='flex flex-wrap'>
                     {filteredBlogs.length > 0 ? (
                         filteredBlogs.map((blog) => (
                             <section key={blog.id} className='w-full md:w-1/3 mx-auto'>
