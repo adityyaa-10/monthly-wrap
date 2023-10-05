@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faComment } from '@fortawesome/free-solid-svg-icons'
 // import reactbg from '../assets/Images/react.png';
 import Cookies from 'js-cookie';
@@ -16,6 +16,7 @@ const FullBlogPage = () => {
     const [cover, setCover] = useState('');
     const [likes, setLikes] = useState(0);
     const [comments, setComments] = useState([]);
+
 
     useEffect(() => {
         const fetchBlogDetail = async () => {
@@ -139,7 +140,6 @@ const FullBlogPage = () => {
         navigate(-1);
     };
 
-    console.log(comments[0].date_posted)
 
     return (
         <div>
@@ -152,10 +152,10 @@ const FullBlogPage = () => {
                         <div className="max-w-5xl mx-auto bg-primary rounded-lg shadow-lg p-6">
                             <button
                                 onClick={goBack}
-                                className="bg-blue text-white font-semibold py-2 px-3 rounded mb-3 flex items-center"
+                                className=" text-white py-2 rounded mb-3 flex items-center"
                                 style={{ color: 'white' }} // Set the color to white
                             >
-                                <ArrowLeft className="mr-2" /> Go Back
+                                <ArrowLeft className="mr-2" /> 
                             </button>
                             <h1 className="text-3xl text-center text-white font-bold my-6">{title.toUpperCase().replace(/-/g, ' ')}</h1>
                             <div className='w-full'>
@@ -169,8 +169,7 @@ const FullBlogPage = () => {
                                     onClick={handleLike}
                                     className="bg-blue text-white font-semibold py-2 px-4 rounded mb-5 w-32"
                                 >
-                                    <FontAwesomeIcon className='pr-2' icon={faThumbsUp}></FontAwesomeIcon>
-                                    Like ({likes})
+                                    <FontAwesomeIcon className={`pr-2 ${likes!==0 ?`text-red-500`:''} h-6`} icon={faHeart}></FontAwesomeIcon>({likes})
                                 </button>
                                 <div className="space-y-2">
                                     {comments.map((comment) => (
