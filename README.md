@@ -80,17 +80,26 @@ source [name of  the  virtual  env]/bin/activate
 7. Install the dependencies.
 
 ```sh
-pip  install  -r  requirements.txt
+(env)$ pip  install  -r  requirements.txt
+```
+8. Set up Environment Variables
+
+Create a .env file in the project root directory based on the .env.example template. You can find the .env.example file in the same directory. Copy its content and create a new .env file with your own values.
+#### Example '.env' file:
+
+```sh
+SECRET_KEY=mysecretkey
+
 ```
 
-8. Set up database
+9. Set up database
 
 ```bash
-python  manage.py  makemigrations
+(env)$ python  manage.py  makemigrations
 ```
 
 ```bash
-python  manage.py  migrate
+(env)$ python  manage.py  migrate
 ```
 
 #### Note: (env) in the beginning indicates that the terminal session now operates in the activated virtual environment.
