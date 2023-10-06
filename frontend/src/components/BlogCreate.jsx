@@ -165,10 +165,15 @@ const BlogCreate = () => {
                                         className="w-1/3 bg-gray-200 rounded border text-base outline-none text-gray-700 py-2 px-3 leading-8 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-blue-400"
                                     >
                                         <option value="" disabled className="text-gray-500">Select a category</option>
-                                        <option value="category1" className="text-lg m-2 bg-white p-2">Category 1</option>
-                                        <option value="category2" className="text-lg m-2 bg-white p-2">Category 2</option>
-                                        <option value="category3" className="text-lg m-2 bg-white p-2">Category 3</option>
-                                        <option value="category4" className="text-lg m-2 bg-white p-2">Category 4</option>
+                                        <option value="Blockchain technology" className="text-lg m-2 bg-white p-2">Blockchain technology</option>
+                                        <option value="Cloud computing" className="text-lg m-2 bg-white p-2">Cloud computing</option>
+                                        <option value="Artificial intelligence" className="text-lg m-2 bg-white p-2">Artificial intelligence</option>
+                                        <option value="Virtual Reality" className="text-lg m-2 bg-white p-2">Virtual Reality</option>
+                                        <option value="Chatbots" className="text-lg m-2 bg-white p-2">Chatbots</option>
+                                        <option value="Automation" className="text-lg m-2 bg-white p-2">Automation</option>
+                                        <option value="Digital Marketing" className="text-lg m-2 bg-white p-2">Digital Marketing</option>
+                                        <option value="E-commerce" className="text-lg m-2 bg-white p-2">E-commerce</option>
+                                        <option value="Internet of things" className="text-lg m-2 bg-white p-2">Internet of things</option>
                                     </select>
                                 </div>
                             </div>
