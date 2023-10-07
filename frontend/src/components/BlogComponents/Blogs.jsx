@@ -27,10 +27,9 @@ const BlogList = () => {
             } else {
                 const data = await response.json();
                 setBlogs(data.reverse());
-                console.log(data);
             }
         } catch (error) {
-            console.error(error);
+            //pass
         }
     };
 
@@ -56,7 +55,7 @@ const BlogList = () => {
 
             fetchBlogs();
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -104,7 +103,7 @@ const BlogList = () => {
                 <div className='flex flex-wrap'>
                     {filteredBlogs.length > 0 ? (
                         filteredBlogs.map((blog) => (
-                            <section key={blog.id} className='w-full md:w-1/3 mx-auto'>
+                            <section key={blog.id} className='w-full md:w-1/3'>
                                 <div className="p-4">
                                     <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
                                         <img

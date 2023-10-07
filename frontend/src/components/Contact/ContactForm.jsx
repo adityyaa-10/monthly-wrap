@@ -74,10 +74,8 @@ const ContactForm = () => {
                 toast.success('Message sent!', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                console.log('Form submitted successfully!');
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
             setSubmissionError('Failed to submit form. Please try again later.');
         }
     };

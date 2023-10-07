@@ -45,7 +45,7 @@ const FullBlogPage = () => {
                     setCover(data.cover_image)
                 }
             } catch (error) {
-                console.error(error);
+                //pass
             }
         };
 
@@ -75,7 +75,7 @@ const FullBlogPage = () => {
             setComments(data.comments);
             Cookies.set('new_access_token', data.access_token);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -101,7 +101,7 @@ const FullBlogPage = () => {
                 setLikes(data.likes_count);
             }
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -132,7 +132,7 @@ const FullBlogPage = () => {
                 setNewContent(''); // Clear the comment input
             }
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -155,22 +155,19 @@ const FullBlogPage = () => {
                                 className=" text-white py-2 rounded mb-3 flex items-center"
                                 style={{ color: 'white' }} // Set the color to white
                             >
-                                <ArrowLeft className="mr-2" /> 
+                                <ArrowLeft className="mr-2" />
                             </button>
                             <h1 className="text-3xl text-center text-white font-bold my-6">{title.toUpperCase().replace(/-/g, ' ')}</h1>
                             <div className='w-full'>
                                 <img src={`http://127.0.0.1:8000/${cover}`} alt="Blog" className="mb-4 h-[30rem] rounded-lg w-full" />
                             </div>
-                            
+
                             <h3 className="text-lg text-white mb-4">Published by <span className='text-blue font-semibold'>@{author}</span></h3>
                             <p className="text-base leading-7 mb-8 text-white" dangerouslySetInnerHTML={{ __html: fullBlogContent }}></p>
                             <div className="flex flex-col mb-7">
-                                <button
-                                    onClick={handleLike}
-                                    className="bg-blue text-white font-semibold py-2 px-4 rounded mb-5 w-32"
-                                >
-                                    <FontAwesomeIcon className={`pr-2 ${likes!==0 ?`text-red-500`:''} h-6`} icon={faHeart}></FontAwesomeIcon>({likes})
-                                </button>
+                                <div className='flex'>
+                                    <FontAwesomeIcon onClick={handleLike} className={`pr-2 mb-5 ${likes !== 0 ? `text-red-500` : ''} h-6`} icon={faHeart}></FontAwesomeIcon>{likes}
+                                </div>
                                 <div className="space-y-2">
                                     {comments.map((comment) => (
                                         <div key={comment.id} className="bg-gray-100 rounded-lg shadow p-4">

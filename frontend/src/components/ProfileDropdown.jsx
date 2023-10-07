@@ -44,18 +44,10 @@ const ProfileDropdown = () => {
                     const newAccessToken = data.access_token;
                     Cookies.set('new_access_token', newAccessToken);
                     handleLogout(); // Retry the logout request with the new access token
-                } else {
-                    // Refresh token failed or expired, handle error
-                    // ...
                 }
-            } else {
-                // Handle other error responses
-                // Example:
-                const errorData = await response.json();
-                console.log(errorData);
             }
         } catch (error) {
-            console.log(error);
+            //pass
         }
     };
     return (

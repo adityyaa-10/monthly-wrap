@@ -113,9 +113,7 @@ const EditUserDetails = () => {
             );
 
             if (response.ok) {
-                const data = await response.json();
                 navigate(`/${user}`)
-                console.log(data)
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(
@@ -126,28 +124,18 @@ const EditUserDetails = () => {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ refresh: new_refresh_token }),
-                        credentials: 'include', // Include cookies in the request
+                        credentials: 'include',
                     });
 
                 if (refreshResponse.ok) {
                     const refreshData = await refreshResponse.json();
                     const newAccessToken = refreshData.access_token;
                     Cookies.set('new_access_token', newAccessToken);
-                    handleSubmit(event); // Retry the form submission with the new access token
-                } else {
-                    // Refresh token failed or expired, handle error
-                    // ...
+                    handleSubmit(event);
                 }
-            } else {
-                // Handle other error responses
-                // Example:
-                const errorData = await response.json();
-                console.error(errorData);
-                // Handle the error if needed
             }
         } catch (error) {
-            console.error(error);
-            // Handle the error if needed
+            //pass
         }
     };
     return (
