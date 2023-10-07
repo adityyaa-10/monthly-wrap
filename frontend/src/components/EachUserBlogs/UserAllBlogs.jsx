@@ -31,7 +31,7 @@ const UserAllBlogs = () => {
                 setBlogs(data.reverse());
             }
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 
@@ -57,7 +57,7 @@ const UserAllBlogs = () => {
 
             fetchBlogs();
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
 

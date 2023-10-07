@@ -31,7 +31,7 @@ const UserProfile = () => {
                 setProfileData(data);
             }
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     };
     const refreshAccessToken = async () => {
@@ -56,8 +56,7 @@ const UserProfile = () => {
             Cookies.set('new_access_token', data.access_token);
             return data.access_token;
         } catch (error) {
-            console.error(error);
-            // Handle error and redirect to login or show appropriate message
+            // console.error(error);
         }
     };
 

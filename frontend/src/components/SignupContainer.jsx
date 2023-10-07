@@ -50,9 +50,7 @@ const SignupContainer = () => {
                     setResponseMessage('Invalid response from the server');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                // Set an error message in the state if something went wrong
+            .catch(() => {
                 setResponseMessage('An error occurred. Please try again later.');
             })
             .finally(() => {

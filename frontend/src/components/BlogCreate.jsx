@@ -23,7 +23,6 @@ const BlogCreate = () => {
 
     const appendLog = useCallback(
         (message) => {
-            console.log("logs = ", logs);
             const newLogs = [...logs, message];
             setLogs(newLogs);
         },
@@ -45,7 +44,6 @@ const BlogCreate = () => {
     );
 
     useEffect(() => {
-        console.log("onChange = ", onChange);
     }, [onChange]);
 
     const onBlur = useCallback(
@@ -75,13 +73,10 @@ const BlogCreate = () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                console.log('Blog created successfully', data);
                 toast.success('Blog sent for review!', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
                 clearFormFields();
-                // navigate('/home');
             } else if (response.status === 401) {
                 const new_refresh_token = Cookies.get('new_refresh_token')
                 const refreshResponse = await fetch(
@@ -102,14 +97,12 @@ const BlogCreate = () => {
                     handleSubmit(e);
                 }
             } else {
-                const errorData = await response.json();
-                console.error('Error creating blog', errorData);
                 toast.error('Error creating blog. Please try again.', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
             }
         } catch (error) {
-            console.error('Error creating blog', error);
+            //pass
         }
     };
 

@@ -21,7 +21,7 @@ const LoginContainer = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ refresh: refreshToken }),
-                credentials: 'include', // Include cookies in the request
+                credentials: 'include',
             });
 
             if (refreshResponse.ok) {
@@ -60,8 +60,6 @@ const LoginContainer = () => {
                 if (data.access_token && data.refresh_token && data.message) {
                     setResponseMessage(data.message);
                     navigate('/home');
-                    console.log(data.access_token)
-                    console.log(data.refresh_token)
                     const new_access_token = data.access_token;
                     const new_refresh_token = data.refresh_token;
                     const userid = data.username
@@ -109,7 +107,6 @@ const LoginContainer = () => {
                 setResponseMessage('An error occurred. Please try again later.');
             }
         } catch (error) {
-            console.error('Error:', error);
             setResponseMessage('An error occurred. Please try again later.');
         } finally {
             setSubmitting(false);

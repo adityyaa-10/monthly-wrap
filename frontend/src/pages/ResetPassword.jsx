@@ -28,12 +28,12 @@ const ResetPassword = () => {
             });
 
             if (response.ok) {
-                console.log('Password reset successful');
+                //pass
             } else {
-                console.error('Password reset failed');
+                //pass
             }
         } catch (error) {
-            console.error('Error resetting password:', error);
+            // console.error('Error resetting password:', error);
         } finally {
             setSubmitting(false);
         }
