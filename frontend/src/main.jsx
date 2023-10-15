@@ -18,6 +18,7 @@ import Home from './pages/Home';
 import ResetPassword from './pages/ResetPassword';
 import FullBlogPage from './components/FullBlogPage';
 import ForgotPassword from './pages/ForgotPassword';
+import NotFoundPage from './components/NotFoundPage';
 
 const router = createBrowserRouter([
   {
@@ -45,11 +46,11 @@ const router = createBrowserRouter([
     element: <ContactUs />
   },
   {
-    path: "/:user",
+    path: "users/:user",
     element: <UserDashboard />
   },
   {
-    path: "/:user/edit",
+    path: "users/:user/edit",
     element: <EditUserProfile />
   },
   {
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
   {
     path: "/forgotpassword",
     element: <ForgotPassword />
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />
   }
 ]);
 
