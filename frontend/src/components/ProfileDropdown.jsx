@@ -71,7 +71,7 @@ const ProfileDropdown = () => {
                         <div className="px-1 py-1 ">
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/${userid}`}
+                                    <Link to={`/users/${userid}`}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
@@ -81,7 +81,7 @@ const ProfileDropdown = () => {
                             </Menu.Item>
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/${userid}/edit`}
+                                    <Link to={`/users/${userid}/edit`}
                                         className={`${active ? 'bg-blue text-white' : 'text-dimWhite'
                                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                     >
