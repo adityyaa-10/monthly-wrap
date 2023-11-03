@@ -47,7 +47,7 @@ const SignupContainer = () => {
                     setResponseMessage(data.message);
                 } else {
                     // Set an error message in the state if the response is not as expected
-                    setResponseMessage('Invalid response from the server');
+                    setResponseMessage('Username and Email must be unique!');
                 }
             })
             .catch(() => {
@@ -105,7 +105,7 @@ const SignupContainer = () => {
                             {touched.password2 && errors.password2 && <div className='text-sm font-normal text-red-600'>{errors.password2}</div>}
                         </div>
                         <button type="submit" className='hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2'>Sign Up</button>
-                        {responseMessage && <div className='py-3 mb-1 text-green-600 text-sm font-semibold'>{responseMessage}</div>}
+                        {responseMessage && <div className='py-3 mb-1 text-red-600 text-sm font-semibold'>{responseMessage}</div>}
                         <div className='color-light pt-4 text-center text-sm'>
                             Already have an Account?
                             <Link to={`/login`}>
