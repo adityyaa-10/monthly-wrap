@@ -1,6 +1,7 @@
 import Sidebar from '../components/Sidebar';
 import UserProfile from '../components/UserProfile';
-import UserAllBlogs from '../components/EachUserBlogs/UserAllBlogs';
+import UserPortfolio from '../components/UserPortolio';
+// import UserAllBlogs from '../components/EachUserBlogs/UserAllBlogs';
 
 const UserDashboard = () => {
     return (
@@ -11,7 +12,7 @@ const UserDashboard = () => {
             <div className="p-4 sm:ml-64 ">
                 <div className="p-4  mt-16 text-white">
                     <UserProfile />
-                    <UserAllBlogs />
+                    <UserPortfolio />
                 </div>
             </div>
         </div>
