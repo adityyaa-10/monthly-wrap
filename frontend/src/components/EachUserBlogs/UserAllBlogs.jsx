@@ -71,9 +71,18 @@ const UserAllBlogs = () => {
     return (
         <section className="max-w-screen-xl mx-auto body-font">
             <div className="px-auto py-11">
-                <h2 className="text-2xl md:text-4xl ml-5 py-4 font-semibold">
-                    Check out <span className="text-blue">My Blogs</span>
-                </h2>
+                <div className="flex items-center justify-between flex-wrap">
+                    <div className="mb-7 sm:mb-0">
+                        <h2 className="text-2xl md:text-4xl ml-5 py-5 font-semibold">
+                            Check out <span className="text-blue">My Blogs</span>
+                        </h2>
+                    </div>
+                    <div className="flex gap-3">
+                        <button className='text-white bg-blue py-2 px-4 rounded-[8px]'>
+                            Create Blog
+                        </button>
+                    </div>
+                </div>
                 <div className="max-w-md mx-auto py-11">
                     <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden ">
                         <div className="grid place-items-center h-full w-12 text-dimWhite cursor-pointer bg-blue hover:text-white">

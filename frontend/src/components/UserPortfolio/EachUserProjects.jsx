@@ -20,15 +20,19 @@ const EachUserProjects = () => {
 
     return (
         <section id='portfolio'>
-            <div className="container">
+            <div className="px-auto py-11">
                 <div className="flex items-center justify-between flex-wrap">
                     <div className="mb-7 sm:mb-0">
                         <h2 className="text-2xl md:text-4xl ml-5 py-5 font-semibold">
-                            Check out <span className="text-blue">My Projects</span>
+                            Check out <span className="text-blue">My Blogs</span>
                         </h2>
                     </div>
+                    <div className="flex gap-3">
+                        <button className='text-white bg-blue py-2 px-4 rounded-[8px]'>
+                            Add Project
+                        </button>
+                    </div>
                 </div>
-
                 <div className='flex items-center gap-4 flex-wrap mt-12'>
                     {portfolios.slice(0, nextItems)?.map((portfolio, index) => (
                         <div

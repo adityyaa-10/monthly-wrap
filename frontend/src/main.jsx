@@ -19,6 +19,7 @@ import ResetPassword from './pages/ResetPassword';
 import FullBlogPage from './components/FullBlogPage';
 import ForgotPassword from './pages/ForgotPassword';
 import NotFoundPage from './components/NotFoundPage';
+import AddProject from './pages/AddProject';
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
   {
     path: "/forgotpassword",
     element: <ForgotPassword />
+  },
+  {
+    path: "/users/:user/addproject",
+    element: <AddProject />
   },
   {
     path: '*',
