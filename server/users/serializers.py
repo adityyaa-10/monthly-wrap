@@ -8,13 +8,22 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .utils import Util
 from .models import Profile
+from .models import Projects
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(read_only=True, slug_field='username')
     # profile_picture = serializers.ImageField(required = False)
+
     class Meta:
         model = Profile
         fields = ['user','name','about','techstack','other_interests','email','phone_no','github_link','twitter_link','linkedin_link',]
+
+class ProjectSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source = 'user.username')
+
+    class Meta:
+        model = Projects
+        fields = ('id', 'user', 'title', 'description', 'image', 'tech_used', 'project_link')
 
 
 class RegisterSerializer(serializers.ModelSerializer):

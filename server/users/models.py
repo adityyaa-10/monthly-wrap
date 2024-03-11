@@ -34,14 +34,16 @@ class Profile(models.Model):
             img.save(self.profile_picture.path)
 
 
-class Categories(models.Model):
-    pass
 
 class Projects(models.Model):
-    title = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    title = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField()
-    technologyUsed = models.ManyToManyField(Categories)
-    projectLink = models.URLField()
+    image = models.ImageField(upload_to='projects/', blank=True)  
+    tech_used = models.CharField(max_length = 200, blank = True)
+    project_link = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.title
 
 

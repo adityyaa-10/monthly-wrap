@@ -12,6 +12,8 @@ from .models import Profile
 from django.shortcuts import get_object_or_404
 from rest_framework.settings import api_settings
 from django.contrib.auth import authenticate
+from .serializers import ProjectSerializer
+from .models import Projects
 
 
 
@@ -138,4 +140,75 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 
+class CategoryListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated] 
+    authentication_classes = [JWTAuthentication] 
 
+    def get(self, request):
+        categories = Categories.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = CategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class ProjectListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]  
+    authentication_classes = [JWTAuthentication]
+    def get(self, request):
+        user = request.user  
+        projects = Projects.objects.filter(user=user)
+        serializer = ProjectSerializer(projects, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ProjectSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        tech_used_string = serializer.validated_data.pop('tech_used')
+        tech_used_list = tech_used_string.split(',')
+
+        for tech_name in tech_used_list:
+            if not tech_name.strip():  
+                return Response({'tech_used': 'Invalid technology name(s).'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.validated_data['user'] = request.user
+
+        project = serializer.save()
+
+        project.tech_used = ','.join(tech_used_list)
+        project.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+class ProjectRetrieveUpdateDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated] 
+    authentication_classes = [JWTAuthentication]
+
+    def get_object(self, pk):
+        try:
+            project = Projects.objects.get(pk=pk)
+            self.check_object_permissions(self.request, project)  
+            return project
+        except Projects.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, pk):
+        project = self.get_object(pk)
+        serializer = ProjectSerializer(project)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        project = self.get_object(pk)
+        serializer = ProjectSerializer(project, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        project = self.get_object(pk)
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
