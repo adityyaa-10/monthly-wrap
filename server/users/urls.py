@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MyTokenObtainPairView, RegisterAPIView, CustomLoginAPIView, ChangePasswordAPIView, PasswordResetEmailAPIView, PasswordResetAPIView, ProfileAPIView, LogoutAPIView,CategoryListCreateView, ProjectListCreateView, ProjectRetrieveUpdateDeleteView
+from .views import MyTokenObtainPairView, RegisterAPIView, CustomLoginAPIView, ChangePasswordAPIView, PasswordResetEmailAPIView, PasswordResetAPIView, ProfileAPIView, LogoutAPIView, ProjectListCreateView, ProjectRetrieveUpdateDeleteView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -10,7 +10,6 @@ urlpatterns = [
     path('send-reset-password-email/', PasswordResetEmailAPIView.as_view(), name='reset-password-email'),
     path('reset-password/<str:uid>/<str:token>/', PasswordResetAPIView.as_view(), name='reset-password'),
     path('profiles/<str:username>/', ProfileAPIView.as_view(), name='profile'),
-    path('categories/', CategoryListCreateView.as_view(), name='category-list'),
     path('projects/', ProjectListCreateView.as_view(), name='project-list'),
     path('projects/<int:pk>/', ProjectRetrieveUpdateDeleteView.as_view(), name='project-detail'),
 

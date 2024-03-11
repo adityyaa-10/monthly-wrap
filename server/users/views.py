@@ -12,8 +12,8 @@ from .models import Profile
 from django.shortcuts import get_object_or_404
 from rest_framework.settings import api_settings
 from django.contrib.auth import authenticate
-from .serializers import CategorySerializer, ProjectSerializer
-from .models import Categories, Projects
+from .serializers import ProjectSerializer
+from .models import Projects
 
 
 
@@ -165,11 +165,24 @@ class ProjectListCreateView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        user = request.user
         serializer = ProjectSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=user)  
+        tech_used_string = serializer.validated_data.pop('tech_used')
+        tech_used_list = tech_used_string.split(',')
+
+        for tech_name in tech_used_list:
+            if not tech_name.strip():  
+                return Response({'tech_used': 'Invalid technology name(s).'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.validated_data['user'] = request.user
+
+        project = serializer.save()
+
+        project.tech_used = ','.join(tech_used_list)
+        project.save()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
 class ProjectRetrieveUpdateDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated] 
