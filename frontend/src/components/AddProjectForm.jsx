@@ -1,19 +1,23 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
 
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ProjectForm = () => {
     const [image, setImage] = useState(null);
-    const [formData, setFormData] = useState({
-        image: null,
-        title: '',
-        description: '',
-        tech_used: '',
-        project_link: ''
-    });
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [techused, setTechUsed] = useState('')
+    const [projectlink, setProjectLink] = useState('')
+
+    const clearFormFields = () => {
+        setImage(null);
+        setTitle('');
+        setDescription('');
+        setTechUsed('');
+        setProjectLink('');
+    };
 
     const refreshAccessToken = async () => {
         try {
@@ -45,67 +49,65 @@ const ProjectForm = () => {
         setImage(file);
     };
 
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const accessToken = Cookies.get('new_access_token');
 
-            const form = new FormData();
-            form.append('image', formData.image);
-            form.append('title', formData.title);
-            form.append('description', formData.description);
-            form.append('tech_used', formData.tech_used);
-            form.append('project_link', formData.project_link);
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('tech_used', techused);
+            formData.append('project_link', projectlink);
 
             const response = await fetch('http://127.0.0.1:8000/api/users/projects/', {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
-                body: form,
+                body: formData,
             });
 
             if (!response.ok) {
                 if (response.status === 401) {
                     await refreshAccessToken();
                     const newAccessToken = Cookies.get('new_access_token');
-                    const retryResponse = await fetch('http://127.0.0.1:8000/query/contactus/', {
+                    const retryResponse = await fetch('http://127.0.0.1:8000/api/users/projects/', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             Authorization: `Bearer ${newAccessToken}`,
                         },
-                        body: form,
+                        body: formData,
                     });
 
                     if (!retryResponse.ok) {
-                        toast.error('Server did not respond', {
-                            position: toast.POSITION.TOP_RIGHT,
-                        });
+                        throw new Error('Server did not respond');
                     }
                 } else {
-                    toast.error('Server did not respond', {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
+                    throw new Error('Server did not respond');
                 }
             }
-            else {
-                // Handle success here
-                toast.success('Message sent!', {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            }
+
+            setImage(null);
+
+            // Display success message
+            toast.success('Project added successfully!', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            clearFormFields();
+
         } catch (error) {
             console.error('Error adding project:', error);
+            // Display error message
+            toast.error('Failed to add project', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
         }
     };
+
+
 
     return (
         <>
@@ -144,7 +146,7 @@ const ProjectForm = () => {
                                         name="title"
                                         className="text-primary block p-3 w-full text-sm rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 "
                                         placeholder="Title of the project"
-                                        onChange={handleChange}
+                                        onChange={(e) => setTitle(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -153,11 +155,11 @@ const ProjectForm = () => {
                                     <label htmlFor="subject" className="block mb-2 text-sm font-medium dark:text-gray-300">Description</label>
                                     <input
                                         type="text"
-                                        id="subject"
+                                        id="description"
                                         name="description"
                                         className="text-primary block p-3 w-full text-sm rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 "
                                         placeholder="Description of the project"
-                                        onChange={handleChange}
+                                        onChange={(e) => setDescription(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -166,11 +168,11 @@ const ProjectForm = () => {
                                     <label htmlFor="subject" className="block mb-2 text-sm font-medium dark:text-gray-300">Tech Used</label>
                                     <input
                                         type="text"
-                                        id="subject"
+                                        id="tech_used"
                                         name="tech_used"
                                         className="text-primary block p-3 w-full text-sm rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 "
                                         placeholder="Tech Stack comma separated"
-                                        onChange={handleChange}
+                                        onChange={(e) => setTechUsed(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -179,11 +181,11 @@ const ProjectForm = () => {
                                     <label htmlFor="subject" className="block mb-2 text-sm font-medium dark:text-gray-300">Public URL/ GitHub URL</label>
                                     <input
                                         type="text"
-                                        id="subject"
+                                        id="project_link"
                                         name="project_link"
                                         className="text-primary block p-3 w-full text-sm rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 "
                                         placeholder="URL of the project"
-                                        onChange={handleChange}
+                                        onChange={(e) => setProjectLink(e.target.value)}
                                     />
                                 </div>
                             </div>
