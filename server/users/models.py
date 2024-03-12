@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+from django.utils.text import slugify
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -38,6 +40,7 @@ class Profile(models.Model):
 class Projects(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique = True)
     description = models.TextField()
     image = models.ImageField(upload_to='projects/', blank=True)  
     tech_used = models.CharField(max_length = 200, blank = True)
@@ -45,5 +48,9 @@ class Projects(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
 

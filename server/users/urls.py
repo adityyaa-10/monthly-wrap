@@ -11,7 +11,7 @@ urlpatterns = [
     path('reset-password/<str:uid>/<str:token>/', PasswordResetAPIView.as_view(), name='reset-password'),
     path('profiles/<str:username>/', ProfileAPIView.as_view(), name='profile'),
     path('projects/', ProjectListCreateView.as_view(), name='project-list'),
-    path('projects/<int:pk>/', ProjectRetrieveUpdateDeleteView.as_view(), name='project-detail'),
+    path('projects/<slug:slug>/', ProjectRetrieveUpdateDeleteView.as_view(), name='project-detail'),
     path('profile/projects/<str:username>/', UserProjectView.as_view(), name='project-list'),
 
     path('token/', MyTokenObtainPairView.as_view()),

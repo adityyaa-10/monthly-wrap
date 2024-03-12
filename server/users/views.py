@@ -199,27 +199,27 @@ class UserProjectView(APIView):
 class ProjectRetrieveUpdateDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated] 
     authentication_classes = [JWTAuthentication]
-    def get_object(self, pk):
+    def get_object(self, slug):
         try:
-            project = Projects.objects.get(pk=pk)
+            project = Projects.objects.get(slug=slug)
             self.check_object_permissions(self.request, project)  
             return project
         except Projects.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, pk):
-        project = self.get_object(pk)
+    def get(self, request, slug):
+        project = self.get_object(slug)
         serializer = ProjectSerializer(project)
         return Response(serializer.data)
 
-    def put(self, request, pk):
-        project = self.get_object(pk)
+    def put(self, request, slug):
+        project = self.get_object(slug)
         serializer = ProjectSerializer(project, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
-    def delete(self, request, pk):
-        project = self.get_object(pk)
+    def delete(self, request, slug):
+        project = self.get_object(slug)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
