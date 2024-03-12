@@ -24,6 +24,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = ('id', 'user', 'title', 'description', 'image', 'tech_used', 'project_link')
+        extra_kwargs = {'title': {'required': False}}
 
 
 class RegisterSerializer(serializers.ModelSerializer):
