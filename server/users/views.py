@@ -158,6 +158,7 @@ class CategoryListCreateView(APIView):
 class ProjectListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]  
     authentication_classes = [JWTAuthentication]
+
     def get(self, request):
         user = request.user  
         projects = Projects.objects.filter(user=user)
@@ -182,12 +183,22 @@ class ProjectListCreateView(APIView):
         project.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
+class UserProjectView(APIView):
+    permission_classes = [permissions.IsAuthenticated] 
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, username):
+        user = User.objects.get(username = username)
+        if user is None:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        projects = Projects.objects.filter(user = user)
+        serializer = ProjectSerializer(projects, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ProjectRetrieveUpdateDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated] 
     authentication_classes = [JWTAuthentication]
-
     def get_object(self, pk):
         try:
             project = Projects.objects.get(pk=pk)
