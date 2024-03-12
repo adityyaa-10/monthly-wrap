@@ -78,9 +78,9 @@ const UserAllBlogs = () => {
                         </h2>
                     </div>
                     <div className="flex gap-3">
-                        <button className='text-white bg-blue py-2 px-4 rounded-[8px]'>
-                            Create Blog
-                        </button>
+                        <Link to='/create' className='text-white bg-blue py-2 px-4 rounded-[8px]'>
+                            Write Blog
+                        </Link>
                     </div>
                 </div>
                 <div className="max-w-md mx-auto py-11">

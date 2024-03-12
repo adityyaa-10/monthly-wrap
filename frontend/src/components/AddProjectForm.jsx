@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
-
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -10,6 +10,8 @@ const ProjectForm = () => {
     const [description, setDescription] = useState('')
     const [techused, setTechUsed] = useState('')
     const [projectlink, setProjectLink] = useState('')
+
+    const navigate = useNavigate();
 
     const clearFormFields = () => {
         setImage(null);
@@ -96,6 +98,7 @@ const ProjectForm = () => {
             toast.success('Project added successfully!', {
                 position: toast.POSITION.TOP_RIGHT,
             });
+            navigate('/home')
             clearFormFields();
 
         } catch (error) {
