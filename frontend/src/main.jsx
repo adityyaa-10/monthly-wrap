@@ -20,6 +20,7 @@ import FullBlogPage from './components/FullBlogPage';
 import ForgotPassword from './pages/ForgotPassword';
 import NotFoundPage from './components/NotFoundPage';
 import AddProject from './pages/AddProject';
+import ComingSoonPage from './pages/ComingSoon';
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
   {
     path: "/users/:user/addproject",
     element: <AddProject />
+  },
+  {
+    path: "/comingsoon",
+    element: <ComingSoonPage />
   },
   {
     path: '*',

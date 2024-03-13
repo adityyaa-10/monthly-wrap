@@ -8,12 +8,9 @@ import Cookies from 'js-cookie'
 const EachUserProjects = () => {
     const { user } = useParams();
     const [projects, setProjects] = useState([]);
-
     const [nextItems, setNextItems] = useState(6)
     const [showModal, setShowModal] = useState(false)
     const [activeProject, setActiveProject] = useState(null);
-
-
 
     const fetchProjects = async () => {
         try {
@@ -120,9 +117,7 @@ const EachUserProjects = () => {
                         </div>
                     ))}
                 </div>
-
                 <div className='text-center mt-6'>
-
                     {
                         nextItems < projects.length && projects.length > 6 && (<button onClick={loadMoreHandler} className='text-white bg-blue
                          hover:bg-dimBlue py-2 px-4 rounded-[8px] font-[500] ease-in duration-200'>

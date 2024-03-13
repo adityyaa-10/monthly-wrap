@@ -9,7 +9,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 const ResetContainer = () => {
-    const [apiResponse, setApiResponse] = useState(null);
+    const [apiResponse, setApiResponse] = useState({ message: '', type: '' });
 
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
@@ -23,13 +23,13 @@ const ResetContainer = () => {
 
             if (response.ok) {
                 const responseData = await response.json();
-                setApiResponse(responseData.message);
+                setApiResponse({ message: responseData.message, type: 'success' });
             } else {
                 const errorData = await response.json();
-                setApiResponse(errorData.error);
+                setApiResponse({ message: errorData.error || 'An error occurred.', type: 'error' });
             }
         } catch (error) {
-            setApiResponse('An error occurred while connecting to the server.');
+            setApiResponse({ message: 'An error occurred while connecting to the server.', type: 'error' });
         } finally {
             setSubmitting(false);
         }
@@ -37,7 +37,7 @@ const ResetContainer = () => {
 
     return (
         <div>
-            {apiResponse && (
+            {apiResponse.message && (
                 <div
                     className={`mb-4 p-3 ${apiResponse.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                         }`}
@@ -72,7 +72,7 @@ const ResetContainer = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="hover:bg-blue w-full rounded-md py-2 text-base hover:text-white border border-blue mt-2"
+                            className="hover:bg-blue-500 w-full rounded-md py-2 text-base hover:bg-blue hover:text-white border border-blue-500 mt-2"
                         >
                             Send Reset Link
                         </button>
