@@ -84,8 +84,7 @@ source [name of  the  virtual  env]/bin/activate
 ```
 8. Set up Environment Variables
 
-Create a .env file in the project root directory based on the .env.example template. You can find the .env.example file in the same directory. Copy its content and create a new .env file with your own values.
-#### Example '.env' file:
+Create a .env file in the current directory.
 
 ```sh
 SECRET_KEY=mysecretkey
