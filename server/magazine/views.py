@@ -124,13 +124,14 @@ class CategoryBlogView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request, category):
-        if category.lower() == 'all':
-            blogs = BlogPost.objects.all()
-        else:
-            blogs = BlogPost.objects.filter(category__iexact=category)
-        serializer = BlogPostSerializer(blogs, many=True)
-        return Response(serializer.data)
+    def get(self, request, category_slug, *args, **kwargs):
+        try:
+            category = Category.objects.get(slug=category_slug)
+            posts = BlogPost.objects.filter(category=category, is_published=True)
+            serializer = BlogPostSerializer(posts, many=True)
+            return Response(serializer.data)
+        except Category.DoesNotExist:
+            return Response({"error": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
     
 class LikesAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]

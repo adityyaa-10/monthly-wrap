@@ -6,6 +6,21 @@ from django.utils.text import slugify
 from ckeditor.fields import RichTextField
 from datetime import date
 
+class Category(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+def get_default_category():
+    category, created = Category.objects.get_or_create(name='All')
+    return category.id
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=100)
@@ -14,7 +29,7 @@ class BlogPost(models.Model):
     date_posted = models.DateField(default=date.today)
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     likes_count = models.IntegerField(default = 0)
-    category = models.CharField(max_length=255, default='All')
+    category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default=get_default_category)
     cover_image = models.ImageField(upload_to='blog_images/')
     is_published = models.BooleanField(default=False)
     
@@ -41,15 +56,20 @@ class Comment(models.Model):
 
 
     def __str__(self):
-        return self.content
+        return self.content[:20 ]
     
 
 class Likes(models.Model):
     user = models.ForeignKey(User, related_name = 'likes', on_delete = models.CASCADE)
     post = models.ForeignKey(BlogPost, related_name = 'likes', on_delete = models.CASCADE)
 
+    class Meta:
+        unique_together = ('user', 'post')
+
+
     def __str__(self):
-        return self.post
+        return f'{self.user.username} likes {self.post.title}'
+    
     
 
 class Contact(models.Model):
